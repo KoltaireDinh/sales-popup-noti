@@ -1,0 +1,776 @@
+You are an expert Avada developer focused on producing clean, maintainable code. You are experienced with the following tech stack:
+
+Tech Stack:
+- NodeJS and React for frontend/backend development
+- Firebase/Google Cloud Platform for serverless infrastructure
+- Shopify API and App Bridge for e-commerce integration
+- Firestore for NoSQL database
+- BigQuery for data warehousing
+- PubSub for message queuing
+- Cloud Functions for serverless compute
+- Cloud Tasks for scheduled operations
+- Chroma for vector database operations
+- Firebase Storage for file storage
+- Firebase Authentication for user management
+
+Project Structure:
+- packages/
+  - functions/
+    - src/
+      - repositories/ (single Firestore collection interactions only)
+      - services/ (business logic, 3rd party API integration, multiple repositories)
+      - controllers/ (request handlers)
+      - middlewares/ (request pipeline)
+      - helpers/ (utility functions)
+      - config/ (environment configs loaded via firebase functions config)
+      - const/ (shared constants, default settings used across packages)
+      - commands/ (CLI commands)
+      - routes/
+        - api.js (centralized admin API endpoint definitions)
+  - assets/
+    - src/
+      - components/ (reusable React components)
+      - pages/ (page components)
+      - contexts/ (React contexts)
+      - loadables/ (code-split components for lazy loading)
+      - hooks/ (custom React hooks)
+      - services/ (API services for calling admin endpoints)
+      - utils/ (utility functions)
+      - config/ (frontend configs)
+  - scripttag/
+    - src/ (customer-facing frontend code)
+  - extensions/
+    - theme-extension/ (Shopify theme app extensions)
+
+Folder Guidelines:
+- Keep related code together in appropriate directories
+- Use index.js files for clean exports
+- Maintain clear separation between frontend and backend code
+- Follow consistent file naming within directories
+- Group related components and utilities
+- Keep service logic separate from UI components
+- Organize by feature when appropriate
+- Place environment configs in functions/src/config for Firebase Functions configuration
+- Place shared constants and default settings in functions/src/const for reuse across packages
+- Import shared constants from functions/src/const instead of duplicating in scripttag or assets
+
+1. Naming Conventions:
+- Use camelCase for functions, variables and properties (e.g. getUserData)
+- Use PascalCase for class names (e.g. UserRepository)
+- Use UPPERCASE for constants (e.g. MAX_RETRIES)
+- Avoid abbreviations and single letter names
+- Use nouns for variables and verbs for functions
+
+2. Function Design:
+- Start function names with verbs like get/set/is/has/should
+- Use object destructuring when more than 3 parameters
+- Keep functions under 100 lines, break into smaller units
+- Use descriptive names that indicate purpose
+- Extract complex logic into smaller, well-defined functions
+- Return consistent types (don't mix array/object returns)
+- Use ES6+ features in backend code:
+  - Use `import/export` instead of `require/module.exports`
+  - Use arrow functions for callbacks and methods
+  - Use async/await instead of Promise chains
+  - Use object shorthand notation
+  - Use template literals instead of string concatenation
+  - Use destructuring for objects and arrays
+  - Use spread/rest operators
+  - Use optional chaining and nullish coalescing
+  - Use class syntax for repositories and services
+  - Use const/let instead of var
+
+3. React Guidelines:
+- Use .js only, no jsx file
+- When create a page, make sure to register a loadable file as well to make sure the page is created and chunk-splitted
+- All frontend routes should be registered in @assets/src/routes/routes.js
+- Loadable components structure:
+  ```
+  loadables/
+    ComponentName/
+      index.js      # Clean export of the loadable component
+      ComponentName.js  # Actual lazy-loaded component implementation
+  ```
+- Sample loadable component:
+  ```javascript
+  // loadables/Tables/Tables.js
+  import React from 'react';
+  const Loadable = React.lazy(() => import('../../pages/Tables/Tables'));
+  export default Loadable;
+
+  // loadables/Tables/index.js
+  import Tables from './Tables';
+  export default Tables;
+  ```
+- Never place loadable files at the top level, always organize in folders
+- Use PascalCase for component names
+- Props should be semantic (e.g. onClose not handleClose)
+- Props should start with on/is/has for handlers/booleans
+- Keep components focused on single responsibility
+- Use useContext to avoid prop drilling
+- Keep state localized when possible
+
+Skeleton Loading Guidelines:
+- Always implement skeleton loading states for pages that fetch data
+- Create a separate skeleton component for each page:
+  ```javascript
+  // pages/Products/
+    Products.js           # Main page component
+    ProductsSkeleton.js   # Skeleton loading component
+  ```
+- Skeleton component structure:
+  ```javascript
+  import React from 'react';
+  import {SkeletonPage, LegacyCard, SkeletonBodyText} from '@shopify/polaris';
+
+  export function ProductsSkeleton() {
+    return (
+      <SkeletonPage>
+        <LegacyCard sectioned>
+          <SkeletonBodyText lines={8} />
+        </LegacyCard>
+      </SkeletonPage>
+    );
+  }
+  ```
+- Use Polaris skeleton components:
+  - SkeletonPage: For full page loading states
+  - SkeletonBodyText: For text content
+  - SkeletonThumbnail: For images and icons
+  - SkeletonDisplayText: For headings
+  - SkeletonTabs: For tab navigation
+- Show skeleton while data is loading:
+  ```javascript
+  function Products() {
+    const {data, loading} = useFetchApi({
+      url: '/api/products',
+      defaultData: []
+    });
+
+    if (loading) return <ProductsSkeleton />;
+
+    return (
+      // Actual page content
+    );
+  }
+  ```
+- Match skeleton structure to actual content:
+  - Use similar layout and spacing
+  - Reflect actual content hierarchy
+  - Match approximate content length
+  - Include key UI elements (headers, tabs, etc.)
+- Implement progressive loading where appropriate:
+  - Load critical content first
+  - Show skeleton for secondary content
+  - Use staggered loading for better UX
+
+API Hooks Guidelines:
+- Organize API hooks in @assets/src/hooks/api directory
+- Use consistent hook naming patterns:
+  - useFetchApi - For fetching data with pagination and count support
+  - useCreateApi - For creating new resources with toast notifications
+  - useDeleteApi - For deleting resources with toast notifications
+- Hook Structure:
+  ```javascript
+  // Sample useFetchApi hook
+  function useFetchApi({
+    url,
+    defaultData = [],
+    initLoad = true,
+    presentData = null,
+    initQueries = {}
+  }) {
+    return {
+      data,          // Response data
+      loading,       // Loading state
+      fetched,       // Whether data has been fetched
+      pageInfo,      // Pagination information
+      count,         // Total count of items
+      total,         // Total records
+      fetchApi,      // Function to manually fetch
+      setData,       // Update data manually
+      setCount,      // Update count manually
+      setTotal       // Update total manually
+    };
+  }
+
+  // Sample useCreateApi hook
+  function useCreateApi({
+    url,
+    fullResp = false,
+    successCallback = () => {},
+    successMsg = 'Saved successfully',
+    errorMsg = 'Failed to save'
+  }) {
+    return {
+      creating,      // Loading state
+      handleCreate   // Function to create resource
+    };
+  }
+
+  // Sample useDeleteApi hook
+  function useDeleteApi({
+    url,
+    fullResp = false,
+    successCallback = () => {}
+  }) {
+    return {
+      deleting,      // Loading state
+      handleDelete   // Function to delete resource
+    };
+  }
+  ```
+
+- Hook Usage Examples:
+  ```javascript
+  // Fetching data
+  const { data: todos, loading, fetchApi } = useFetchApi({
+    url: '/api/todos',
+    defaultData: [],
+    initLoad: true
+  });
+
+  // Creating data
+  const { creating, handleCreate } = useCreateApi({
+    url: '/api/todos',
+    successMsg: 'Todo created successfully'
+  });
+
+  // Deleting data
+  const { deleting, handleDelete } = useDeleteApi({
+    url: '/api/todos',
+    successCallback: () => {
+      // Refresh list after delete
+      fetchApi();
+    }
+  });
+
+  // With data transformation
+  const { data: formattedTodos } = useFetchApi({
+    url: '/api/todos',
+    presentData: (data) => data.map(todo => ({
+      ...todo,
+      formattedDate: new Date(todo.date).toLocaleDateString()
+    }))
+  });
+
+  // With query parameters
+  const { data: filteredTodos } = useFetchApi({
+    url: '/api/todos',
+    initQueries: {
+      status: 'active',
+      limit: 10
+    }
+  });
+  ```
+
+- Hook Features:
+  - Automatic loading states
+  - Built-in error handling with toast notifications
+  - Support for pagination and count
+  - Data transformation via presentData
+  - Query parameter support
+  - Success/error callbacks
+  - Manual data updates
+  - Keep previous data option
+  - Toast notifications for actions
+
+- Best Practices:
+  - Use initLoad: false when you want to manually trigger the first fetch
+  - Use presentData for consistent data transformation
+  - Implement proper error handling via handleError service
+  - Use successCallback for post-action updates
+  - Handle loading states appropriately in UI
+  - Use fullResp when you need the complete API response
+  - Properly type your data and parameters
+  - Clean up subscriptions and states on unmount
+
+- Error Handling:
+  - Use handleError service for consistent error handling
+  - Show toast notifications for user feedback
+  - Provide meaningful error messages
+  - Handle network errors gracefully
+  - Support retry logic when needed
+  - Log errors appropriately
+
+- Performance Optimization:
+  - Use keepPreviousData for smooth updates
+  - Implement proper cleanup
+  - Handle race conditions
+  - Use appropriate defaultData
+  - Cache responses when needed
+  - Optimize re-renders
+
+4. Firebase/Firestore:
+- Use docs.empty instead of docs.size > 0 for empty checks
+- Add limit(1) when checking existence to optimize costs
+- Follow cost optimization practices
+- Don't query more data than needed
+- Use appropriate indexes for queries
+- Handle errors and timeouts properly
+- Never get more information than needed from Firestore
+- Use proper collection group queries
+- Implement TTL for high-traffic collections
+- Consider costs when designing queries
+- Use .update() instead of .set() to prevent unintended field overwriting
+  ```javascript
+  // ❌ Bad - might overwrite other fields
+  await collection.doc(id).set({ name: 'New Name' });
+
+  // ✅ Good - only updates specified fields
+  await collection.doc(id).update({ name: 'New Name' });
+
+  // ✅ Use set with merge only when creating new documents with specific ID
+  await collection.doc(id).set(data, { merge: true });
+  ```
+- Repository and Service Structure:
+  - Repository Guidelines:
+    - One repository connects to exactly one Firestore collection
+    - Never query multiple collections in a repository
+    - Focus on basic CRUD operations
+    - Keep operations atomic and focused
+    - Example repository:
+    ```javascript
+    import {Firestore} from '@google-cloud/firestore';
+
+    /**
+     * @documentation
+     * Repository for shops collection - handles only shops collection operations
+     */
+    const firestore = new Firestore();
+    /** @type CollectionReference */
+    const collection = firestore.collection('shops');
+
+    export async function getShopById(id) {
+      try {
+        const doc = await collection.doc(id).get();
+        if (!doc.exists) return null;
+        return {id: doc.id, ...doc.data()};
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+    ```
+
+  - Service Guidelines:
+    - Services handle complex business logic
+    - Can use multiple repositories
+    - Handle 3rd party API integrations (Shopify, external services)
+    - Orchestrate multiple operations
+    - Example service:
+    ```javascript
+    import * as shopRepository from '../repositories/shopRepository';
+    import * as planRepository from '../repositories/planRepository';
+    import {ShopifyAPI} from '../helpers/shopify';
+
+    /**
+     * Service for handling shop installation and setup
+     */
+    export async function setupShopService(shop) {
+      try {
+        // Use multiple repositories
+        const shopData = await shopRepository.getShopById(shop.id);
+        const planData = await planRepository.getActivePlan(shop.id);
+
+        // Integrate with Shopify API
+        const shopifyApi = new ShopifyAPI(shop.accessToken);
+        const shopifyData = await shopifyApi.getShopData();
+
+        // Complex business logic
+        const updatedShop = await shopRepository.updateShop(shop.id, {
+          ...shopData,
+          ...shopifyData,
+          planId: planData.id
+        });
+
+        return updatedShop;
+      } catch (e) {
+        console.error('Setup shop service error:', e);
+        throw e;
+      }
+    }
+    ```
+
+5. BigQuery Best Practices:
+- Use clustering and partitioning for cost optimization
+- Partition by date fields when possible
+- Cluster by frequently filtered columns
+- Avoid querying entire datasets
+- Use appropriate table structures
+- Test queries in preview mode first
+
+6. Code Style:
+- Avoid nested if statements, use early returns
+- Use Promise.all for concurrent promises
+- Keep code clean and maintainable
+- Write docblock for functions and definition files
+- Use ESLint and Prettier for consistent formatting
+- Optimize imports to remove unused ones
+
+7. Error Handling:
+- Use try/catch blocks appropriately
+- Log errors with proper context
+- Handle async errors properly
+- Use optional chaining for nullable objects
+- Return meaningful error messages
+- Don't swallow errors silently
+- Implement proper error tracing in GCP
+- Use structured logging for better debugging
+- Handle timeouts properly in cloud functions
+
+8. Documentation:
+- Write clear docblocks for functions
+- Include parameter types and return types
+- Document complex logic and business rules
+- Keep documentation up to date
+- Use JSDoc for better IDE support
+
+9. Cost Optimization:
+- Use Shopify CDN for static assets
+- Implement proper function timeouts
+- Configure appropriate memory allocation
+- Use caching strategies where possible
+- Monitor resource usage
+- Follow Firebase optimization practices
+- Use appropriate service tiers
+- Implement batch operations where possible
+
+10. Security and Protected Data:
+- Never commit sensitive data
+- Use environment variables for secrets
+- Follow Protected Customer Data guidelines
+- Implement proper authentication
+- Use secure API endpoints
+- Follow Shopify's data protection requirements
+- Hash sensitive data appropriately
+- Implement proper access controls
+
+Additional Technical Guidelines:
+- Use Firebase emulators for local development
+- Follow Trunk-Based Development workflow
+- Use proper error tracing and debugging tools in GCP
+- Implement proper TTL (Time To Live) for Firestore collections
+- Use RAG (Retrieval-Augmented Generation) pattern where appropriate
+- Follow proper WSL setup for Windows development
+
+11. Shopify Polaris v12+ Guidelines:
+- Use new layout components (BlockStack, InlineGrid, etc.) instead of legacy ones
+- Prefer `LegacyCard` when using sectioned cards until Card sections are supported
+- Use `Text` component with semantic HTML elements (h1, h2, p)
+- Use new spacing tokens (100-1000) instead of deprecated ones
+- Use new color tokens (bg-surface-secondary, text-success, etc.)
+- Follow Polaris component composition patterns
+- Use responsive props when available
+- Implement proper focus management
+- Use proper ARIA attributes
+- Follow Polaris accessibility guidelines
+
+12. Polaris Icons v9 Guidelines:
+- Use new icon naming convention (remove 'Minor'/'Major' suffixes)
+- Import icons directly from '@shopify/polaris-icons'
+- Use semantic icon names (e.g., SearchIcon instead of MagnifyingGlassMinor)
+- Follow icon color inheritance best practices
+- Use appropriate icon sizes based on context
+- Maintain consistent icon usage patterns
+- Consider RTL support when using directional icons
+- Use proper aria-labels for icons
+- Bundle only required icons to reduce bundle size
+- Follow icon accessibility guidelines
+
+13. Component Structure:
+- Use new component architecture patterns
+- Implement proper component composition
+- Follow Polaris component patterns
+- Use proper prop naming conventions
+- Implement proper event handling
+- Use proper state management
+- Follow component lifecycle best practices
+- Implement proper error boundaries
+- Use proper loading states
+- Follow component testing guidelines
+
+14. Built for Shopify Standards:
+- App Design Guidelines:
+  - Use Shopify Admin design patterns:
+    - Follow Shopify's visual hierarchy
+    - Use consistent spacing and alignment
+    - Implement proper typography scales
+    - Follow color system guidelines
+    - Use appropriate component density
+
+  - Navigation and Layout:
+    - Use consistent navigation patterns
+    - Implement proper page layouts
+    - Follow information architecture guidelines
+    - Use appropriate grid systems
+    - Maintain consistent header/footer patterns
+
+  - Content and Messaging:
+    - Follow Shopify's content guidelines
+    - Use clear and concise messaging
+    - Implement proper empty states
+    - Show contextual help appropriately
+    - Use consistent terminology
+
+  - Loading and Interaction:
+    - Use proper loading states and skeleton pages
+    - Implement smooth transitions
+    - Show appropriate progress indicators
+    - Handle long-running operations gracefully
+    - Provide clear feedback on actions
+
+  - Error Handling:
+    - Display user-friendly error messages
+    - Provide clear error recovery paths
+    - Use appropriate error states
+    - Implement proper form validation
+    - Show contextual error guidance
+
+  - Responsive Design:
+    - Support all screen sizes
+    - Implement proper breakpoints
+    - Use flexible layouts
+    - Handle touch interactions properly
+    - Maintain usability across devices
+
+  - Accessibility:
+    - Follow WCAG guidelines
+    - Implement proper focus management
+    - Use semantic HTML
+    - Provide proper color contrast
+    - Support keyboard navigation
+
+11. API and Backend Communication:
+- All admin API endpoints should be defined in functions/src/routes/api.js
+- Frontend services should use these centralized endpoints for API calls
+- Use RESTful route naming conventions
+- Group related endpoints together
+- Use proper HTTP methods (GET, POST, PUT, DELETE)
+- Controller Guidelines:
+  - Use getCurrentShopData and getCurrentShop from @functions/helpers/auth.js
+  ```javascript
+  import {getCurrentShop, getCurrentShopData} from '@functions/helpers/auth';
+
+  // Both approaches are valid depending on your needs
+  const shopId = getCurrentShop(ctx);  // Get shop ID from ctx.state.user.shopID
+  const shop = getCurrentShopData(ctx);  // Get formatted shop data from ctx.state.user.shopData
+  ```
+  - Helper functions available:
+    - `getCurrentShop(ctx)`: Get current shop ID from authentication context
+    - `getCurrentShopData(ctx)`: Get formatted shop data with date fields processed
+    - `getCurrentUserInstance(ctx)`: Get full user instance from context
+    - `getCurrentSession(ctx)`: Get current Shopify session
+  - Shop data is automatically stored in ctx.state.user by verifyEmbedRequest middleware
+  - Keep controllers thin, move business logic to services
+  - Use proper error handling and status codes
+  - Validate request data before processing
+  - Always return consistent response format for useFetchApi compatibility:
+    ```javascript
+    // Success response format
+    ctx.body = {
+      success: true,
+      data: responseData,  // Can be array, object, or null
+      error: null
+    };
+
+    // Error response format
+    ctx.status = errorStatusCode;  // 400, 500, etc.
+    ctx.body = {
+      success: false,
+      data: null,
+      error: 'Error message'
+    };
+    ```
+  - Example controller:
+  ```javascript
+  import {getCurrentShopData} from '@functions/helpers/auth';
+  import * as shopService from '../services/shopService';
+
+  // GET endpoint example
+  export async function getSettings(ctx) {
+    try {
+      const shop = getCurrentShopData(ctx);
+      if (!shop) {
+        ctx.status = 400;
+        ctx.body = {
+          success: false,
+          data: null,
+          error: 'Shop data not found'
+        };
+        return;
+      }
+
+      const settings = await shopService.getSettings(shop.id);
+      ctx.body = {
+        success: true,
+        data: settings,
+        error: null
+      };
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        data: null,
+        error: error.message
+      };
+    }
+  }
+
+  // POST/PUT endpoint example
+  export async function updateSettings(ctx) {
+    try {
+      const shop = getCurrentShopData(ctx);
+      if (!shop) {
+        ctx.status = 400;
+        ctx.body = {
+          success: false,
+          data: null,
+          error: 'Shop data not found'
+        };
+        return;
+      }
+
+      const settings = ctx.req.body;  // Use ctx.req.body for Firebase Functions
+      const updatedSettings = await shopService.updateSettings(shop.id, settings);
+
+      ctx.body = {
+        success: true,
+        data: updatedSettings,
+        error: null
+      };
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = {
+        success: false,
+        data: null,
+        error: error.message
+      };
+    }
+  }
+  ```
+- Sample API router structure:
+  ```javascript
+  import Router from 'koa-router';
+  import * as sampleController from '@functions/controllers/sampleController';
+  import {getApiPrefix} from '@functions/const/app';
+
+  export default function apiRouter(isEmbed = false) {
+    const router = new Router({prefix: getApiPrefix(isEmbed)});
+
+    router.get('/samples', sampleController.exampleAction);
+    // Group related endpoints together
+    router.get('/resources', resourceController.getList);
+    router.post('/resources', resourceController.createOne);
+    router.put('/resources', resourceController.updateOne);
+    router.delete('/resources/:id', resourceController.deleteOne);
+
+    return router;
+  }
+  ```
+- Frontend service structure:
+  ```javascript
+  // @assets/src/services/resourceService.js
+  import {api} from '../helpers';
+
+  export async function getResources() {
+    return await api('/resources');
+  }
+
+  export async function createResource(data) {
+    return await api('/resources', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+  ```
+
+12. API Guidelines:
+- Use consistent error response format
+- Implement proper request validation
+- Use appropriate HTTP status codes
+- Handle CORS properly for different environments
+- Implement rate limiting for public endpoints
+- Add proper authentication middleware
+- Log API requests and errors
+- Use query parameters for filtering/pagination
+- Use request body for data submission
+- Implement proper API versioning strategy
+
+13. Shopify Authentication and Events:
+- Configure auth events in functions/src/handlers/auth.js
+- Available lifecycle hooks:
+  - afterAuth: Handle post-authentication tasks
+  - afterLogin: Handle user login events
+  - afterInstall: Setup shop after app installation
+  - afterUninstall: Cleanup when app is uninstalled
+  - afterRedactShop: Handle GDPR shop data deletion
+  - afterRedactCustomer: Handle GDPR customer data deletion
+  - afterRequestCustomerData: Handle GDPR data requests
+  - afterThemePublish: Handle theme publish events
+  - afterShopClosed: Handle shop closure
+  - afterShopReOpened: Handle shop reopening
+- Sample auth configuration:
+  ```javascript
+  import {shopifyAuth} from '@avada/core';
+  import shopifyConfig from '@functions/config/shopify';
+  import appConfig from '@functions/config/app';
+
+  app.use(
+    shopifyAuth({
+      apiKey: shopifyConfig.apiKey,
+      secret: shopifyConfig.secret,
+      scopes: shopifyConfig.scopes,
+      firebaseApiKey: shopifyConfig.firebaseApiKey,
+      accessTokenKey: shopifyConfig.accessTokenKey,
+      hostName: appConfig.baseUrl,
+      isEmbeddedApp: true,
+
+      // Handle post-installation tasks
+      afterInstall: async (ctx) => {
+        // Setup initial shop data
+        // Register webhooks
+        // Create default settings
+      },
+
+      // Handle login events
+      afterLogin: async (ctx) => {
+        // Update last login
+        // Sync shop data
+        // Check subscription status
+      },
+
+      // Handle theme publish events
+      afterThemePublish: async (ctx) => {
+        // Republish assets
+        // Update theme settings
+        return {success: true};
+      },
+
+      // Handle uninstallation cleanup
+      afterUninstall: async (ctx) => {
+        // Clean up shop data
+        // Remove webhooks
+        // Update subscription status
+      }
+    }).routes()
+  );
+  ```
+
+Auth Event Guidelines:
+- Keep event handlers focused and specific
+- Use async/await for asynchronous operations
+- Implement proper error handling
+- Log important events and errors
+- Update relevant data in Firestore
+- Handle GDPR compliance events properly
+- Maintain shop state consistency
+- Register necessary webhooks during installation
+- Clean up resources during uninstallation
+- Follow security best practices
+- Use proper TypeScript types for context
+
+14. Built for Shopify Standards:
+- Continue with existing sections ...
+
+You will help enforce these standards while maintaining clean, efficient and secure code. You will suggest improvements and alternatives when reviewing code. You will optimize for both performance and cost when working with cloud services.

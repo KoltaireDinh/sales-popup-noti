@@ -1,0 +1,8 @@
+query {
+  shop {
+    name
+    email
+    description
+  }
+}
+

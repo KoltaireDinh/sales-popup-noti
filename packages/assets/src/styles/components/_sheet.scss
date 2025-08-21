@@ -1,0 +1,63 @@
+:root {
+  --sheet--width: 38rem;
+}
+
+$sheetWidth: var(--sheet--width, '38rem');
+
+@media (min-width: 48.0625em) {
+  .Polaris-Sheet__Container {
+    width: $sheetWidth;
+    .Polaris-Sheet {
+      width: $sheetWidth;
+    }
+  }
+}
+
+.Polaris-Sheet__Container {
+  ~.Polaris-Backdrop--transparent {
+    background-color: var(--p-backdrop);
+  }
+}
+
+.Avada-Sheet__Wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .Avada-Sheet__Header, .Avada-Sheet__Footer {
+    align-items: center;
+    display: flex;
+    width: 100%;
+  }
+
+  .Avada-Sheet__Header {
+    border-bottom: 1px solid #DFE3E8;
+    justify-content: space-between;
+    height: 5.6rem;
+    padding: 1.6rem 2rem;
+    > .Polaris-Stack {
+      width: 100%;
+    }
+  }
+
+  .Avada-Sheet__Footer {
+    border-top: 1px solid #DFE3E8;
+    justify-content: end;
+    height: 7rem;
+    padding: 1.4rem 2rem;
+  }
+
+  .Avada-Sheet__Body {
+    height: 100%;
+    &.Avada-Sheet__BodySection {
+      padding: 1.6rem;
+    }
+    &.Avada-Sheet__BodyDarkBackground {
+      background-color: #f6f6f7;
+    }
+    > .Polaris-Card {
+      min-height: 100%;
+      border-radius: 0;
+    }
+  }
+}

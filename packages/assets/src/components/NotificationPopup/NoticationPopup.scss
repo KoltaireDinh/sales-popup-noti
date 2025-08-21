@@ -1,0 +1,92 @@
+.Avava-SP__Wrapper {
+  width: 293px;
+  position: relative;
+  z-index: 99;
+  color: #333;
+}
+
+.Avava-SP__Wrapper .Avava-SP__LinkWrapper {
+  color: #333;
+}
+@media screen and (max-width: 575px) {
+  .Avava-SP__Wrapper {
+    left: 15px;
+  }
+}
+.Avava-SP__Wrapper img {
+  max-width: 135px;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: -100px;
+  left: -10px;
+  text-align: center;
+  -moz-transition: all 500ms ease;
+  -webkit-transition: all 500ms ease;
+  -o-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+.Avava-SP__Wrapper .Avava-SP__Inner {
+  position: relative;
+}
+.Avava-SP__Wrapper .Avava-SP__Inner:hover img {
+  opacity: 1;
+  visibility: visible;
+  top: -120px;
+}
+.Avava-SP__Wrapper .Avava-SP__Container {
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  border-radius: 20px;
+  -webkit-box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
+  -moz-box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
+  box-shadow: 3px 0 5px rgba(5, 5, 5, 0.07);
+  background: #ffffff;
+  padding: 5px;
+}
+.Avava-SP__Wrapper .Avava-SP__Image {
+  height: 65px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  color: #43495a;
+  font-size: 55px;
+  width: 65px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: top;
+  font-weight: bold;
+  line-height: 69px;
+  background-size: cover;
+  background-position: center;
+}
+.Avava-SP__Wrapper .Avada-SP__Content {
+  display: inline-block;
+  width: calc(100% - 75px);
+  width: -moz-calc(100% - 75px);
+  width: -webkit-calc(100% - 75px);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+}
+.Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Title {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Subtitle {
+  margin-bottom: 0;
+  font-size: 10px;
+  //font-weight: bold;
+  //color: #8b93a8;
+}
+.Avava-SP__Wrapper .Avada-SP__Content .Avada-SP__Footer {
+  font-size: 10px;
+  line-height: 16px;
+  margin-top: 5px;
+}
+.Avava-SP__Wrapper .Avada-SP__Content .uni-blue {
+  color: #2196f3;
+  border-left: 1px solid #e2e4e9;
+  margin-left: 8px;
+  padding-left: 8px;
+}

@@ -1,0 +1,98 @@
+@import '../colors';
+
+// --- TopBar theme ------------------------------------------------------------
+
+$topbar-bg: #0a2540; // <— change this to whatever you want
+$topbar-fg: #ffffff;
+
+.Polaris-Frame__TopBar {
+  background-color: $topbar-bg !important; // beat Polaris defaults
+  border-bottom: none; // optional: remove divider
+}
+
+// Ensure everything in the TopBar uses the light foreground
+.Polaris-Frame__TopBar,
+.Polaris-Frame__TopBar * {
+  color: $topbar-fg;
+}
+
+// Your app title link was using $primaryDarkColor (hard to read on dark bg)
+.Avada-TopBar__Title a {
+  color: $topbar-fg;
+}
+
+// Optional: tweak icon fills so they inherit correctly
+.Polaris-Frame__TopBar .Polaris-Icon svg {
+  fill: currentColor;
+}
+
+// --- Your existing styles (kept) --------------------------------------------
+
+// subscription plan badge
+.Polaris-TopBar {
+  .Avada-Pricing__Badge {
+    position: absolute;
+    left: 6.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  @media all and (max-width: 768px) {
+    .Avada-Pricing__Badge { left: 5rem; }
+  }
+
+  @media all and (max-width: 411px) {
+    .Avada-Pricing__Badge { display: none; }
+  }
+}
+
+.Polaris-TopBar__SearchField { display: none; }
+
+.Avada-TopBar__Wrapper {
+  display: flex;
+  align-items: center;
+  color: $topbar-fg;
+
+  .Polaris-Icon svg,
+  .Polaris-Button {
+    color: $topbar-fg;
+    fill: $topbar-fg;
+  }
+
+  > * {
+    &:not(:nth-child(1)) { margin-left: 2rem; }
+    &:nth-last-child(1) { margin-right: 2rem; }
+  }
+
+  // logo and navigation icon
+  .Avada-TopBar__Title {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+
+    a {
+      font-weight: 600;
+      // color is overridden above to $topbar-fg for readability
+    }
+
+    > * { margin-right: 1.2rem; }
+  }
+
+  // top right icons
+  .Avada-TopBar__Icons {
+    margin-top: 0.4rem;
+
+    .Polaris-Button--plain:active:not(.Polaris-Button--iconOnly) > .Polaris-Button__Content {
+      background: transparent;
+    }
+
+    .Polaris-Thumbnail {
+      border: unset;
+
+      img { width: 2rem; }
+    }
+  }
+}

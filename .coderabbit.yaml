@@ -1,0 +1,237 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: false
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+
+  path_filters: [ '!.coderabbit.yaml' ]
+
+  path_instructions:
+    - path: "packages/functions/**/repositories/*.js"
+      instructions: |
+        Repository should be used to interact with one collection only. It should not contains methods of multiple collections. If you want to interact with multiple collections, use service instead.
+
+    - path: "packages/functions/**/repositories/*.js"
+      instructions: |
+        Should be naming your firestore collection ref const collection = firestore.collection('COLLECTION_NAME'); Don't name it specific name like usersRef, productsRef. It should be generic for easy code copying to other repositories.
+    - path: "packages/**/routes/*.js"
+      instructions: |
+        Routes must use controller to handle requests. Please make sure that all routes are using the controller not inlining the logic.
+    - path: "**/*.js"
+      instructions: |
+        Use correct naming conventions for variables and functions. camelCase for function, variable, property names and PascalCase for class names, uppercase for constants.
+    - path: "**/*.js"
+      instructions: |
+        Name function and variable names descriptively. Avoid using abbreviations and single letter names. For example, function should be some doSomething() instead of something. It should show action. Boolean should be hasSomething, isActive. Variable should be nouns.
+
+    - path: "**/*.js"
+      instructions: |
+        We prefer functional programming style. Avoid using loops and use map, filter, reduce instead.
+
+    - path: "**/*.js"
+      instructions: |
+        We prefer functional programming style. Prefer const over let. Prefer immutability. Avoid mutating objects and arrays. Use spread operator or Object.assign to create new objects and arrays.
+
+    - path: "**/*.js"
+      instructions: |
+        If you are using more than 3 parameters in a function, consider using object destructuring or passing an object instead of multiple parameters. Params with default values should be at the end.
+
+    - path: "**/*.js"
+      instructions: |
+        Prefer default boolean param of a function to be falsy. It allows us to requires all existing usages to be updated when we add a new parameter.
+
+    - path: "**/*.js"
+      instructions: |
+        Avoid nested if else statements. Use early return to reduce nesting. Use guard clauses to handle edge cases first. Always keep main logic in the main block instead of nested.
+
+    - path: "**/*.js"
+      instructions: |
+        If complex if conditions, consider extract them to a separate function to make the code more readable with descriptive function name.
+
+    - path: "**/*.js"
+      instructions: |
+        Try keeping your code self-explanatory. Avoid comments that explain what the code does. Instead, write code that explains itself. Use comments to explain why you are doing something.
+
+    - path: "**/*.js"
+      instructions: |
+        See if you can use Promise.all to run multiple promises concurrently instead of sequentially to save time if possible. If you have multiple await calls that are not dependent on each other, you can use Promise.all to run them concurrently.
+
+    - path: "packages/assets/*.js"
+      instructions: |
+        Name of the component and file should be same. For example, if you have a component named Header, the file should be named Header.js.
+
+    - path: "**/*.scss"
+      instructions: |
+        You should follow BEM naming convention for CSS classes. For example, .Avada-FAQ__MessageText--unsupported-format
+
+    - path: "packages/scripttag/**/*.js"
+      instructions: |
+        You should use React.lazy, code splitting, tree shaking to reduce the bundle size. Avoid importing the whole library if you are using only a few functions.
+        For example, library like lodash, moment, crypto-js, etc. Use import AES from 'crypto-js/aes'; instead of import crypto from 'crypto-js';
+
+    - path: "packages/scripttag/**/*.js"
+      instructions: |
+        Do not use large-size package, or by mistake include Polaris to scripttag. It would case the scripttag to be slow and increase the bundle size.
+
+    - path: "**/*.js"
+      instructions: |
+        Nested ternary operators are hard to read. Avoid using nested ternary operators. Use getter function with if else instead, combined with early return.
+
+    - path: "**/*.js"
+      instructions: |
+        Avoid inline style inside your React code.
+
+    - path: "**/*.js"
+      instructions: |
+        Always prefer to use setState(prev => {return prev}) so that the prev state is always up to date.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        No need to use FieldValue.serverTimestamp(), just use new Date() to get the current date and time. Firestore can use JS date.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Avoid getting all documents from a collection and then filtering them in the code. Use Firestore query to filter the documents before fetching them.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Avoid delay() function in your backend code to handle backoff, it will increase the CPU and memory billing of the Cloud Function. Use Google Cloud Task to handle retries and backoff.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        If you set your Cloud Functions config with .runWith({memory: 'XGB', timeoutSeconds: time}). Double think that time you need and memory you need. It will affect your billing. Especially with high traffic function, or recursive functions.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        For webhook controller, always return 200 status code to the webhook provider even with catch error. If you return 500 status code, the webhook provider will retry the webhook.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Controller should be wrapped with try catch block to handle error. Try not overuse try catch block, only use it when you need to handle error, especially when using with repository or services. Handling error in repository or services only when you find it no need to bubble the exception up.
+
+    - path: "**/*.js"
+      instructions: |
+        Accessing a too deep nested object is hard to read and error-prone. Consider using optional chaining (?.) to access nested properties.
+
+    - path: "**/*.js"
+      instructions: |
+        If there is complex condition with negative condition along with early return. Make sure to double check if the condition is correct. It's easy to make mistake with complex condition. Developers mistake many negative conditions with OR operator.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        It is forbidden saving accessToken, storefrontToken to Shopify Metafield or dumping in the global JS variable.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Any public API should not expose email, name, address of customers without authentication. It is forbidden to expose customer's personal information without authentication.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        For high traffic, prone to error, or critical functions (pubsub, background, webhook, clientAPI), always add logging to the function. It will help you to debug the function when it fails.
+
+    - path: "**/*.js"
+      instructions: |
+        In case of fixing an issue, do NOT check if a shop, user to fix solely for that shop, user. Always check if the fix is applicable to all shops, users. If not, create a new function, new logic to handle that case.
+
+    - path: "**/*.js"
+      instructions: |
+        If you have a constant, config that need to share among assets, scripttag folders, put it isolated in the functions folder. It is better so that NodeJS variables in the functions folder and share with other.
+
+    - path: "**/*.js"
+      instructions: |
+        Do not use ==, use ===. Also with != and !==
+
+
+    - path: "**/*.js"
+      instructions: |
+        Do not use Promise or callback. Always use async/await for async operation.
+
+    - path: "**/*.js"
+      instructions: |
+        API call to Shopify using shopify-api-node should no longer make request to scripttag API, asset API since they are deprecated. Use theme app extensions or ask for Asset API whitelist.
+
+    - path: "**/*.js"
+      instructions: |
+        Should no longer use REST API to Shopify, use GraphQL API instead.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Inside admin API endpoints like api, apiSa. Use const shop = getCurrentShopData(ctx); to get shop data instead of getting shopId via const shopId = getCurrentShop(ctx); Update to latest @avada/core if needed.
+        This shop data will be store ctx.state.user via verifyEmbedRequest middleware.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        If you want to log data to Google Cloud Logging by console.log, console.error, etc. Provide contextual description for your logging, also if it is an object, it take multiple line in logging, JSON.stringify it if it is object or array:
+
+        console.log("current user", shopId, JSON.string(user || {}))
+
+    - path: "**/*.js"
+      instructions: |
+        Do not use && operator to filter item in an array. It will insert an false value to the array. Use filter instead. Or afterwards, use filter(Boolean) to remove false value.
+
+    - path: "**/*.js"
+      instructions: |
+        Name your React component props semantic and friendly. A component like Sheet should have props like title, children, onClose, open, animationSpeed instead of status, handleClose, animation. It make for the person who reuse the component find it hard to use.
+
+    - path: "**/*.js"
+      instructions: |
+        We are using @shopify/polaris v13 for our admin UI. Follow Polaris guideline and use correct components. Don't reinvent the wheel. Use Polaris components as much as possible.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        Don't say docs.size > 0 to check if a collection is empty. Use docs.empty instead with Firestore.
+
+    - path: "**/*.js"
+      instructions: |
+        Do not declare an empty array and push items to it. Use map, filter, reduce instead. It is more readable and less error-prone.
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        While get data from Firestore with doc.data(), use import {formatDateFields} from '@avada/firestore-utils'; to format the date fields to JS Date object. It will help you to work with date object easier. No need to use like: doc.data().createdAt.toDate()
+
+    - path: "packages/functions/**/*.js"
+      instructions: |
+        If you check if exists, for example, check if a shop has default setting or not, where query it by shopId, extra conditions if needed, so remember to limit(1) to get only 1 document. It will save you cost and time.
+
+    - path: "**/*.js"
+      instructions: |
+        Don't compare === or !== with a string value like: layout === 'grid'. Use enum or constant instead. It will prevent typo and make the code more readable.
+
+    - path: "**/*.js"
+      instructions: |
+        Don't commit serviceAccount, accessToken to the repository. Use environment variables instead. It is forbidden to commit sensitive data to the repository.
+
+    - path: "**/*.js"
+      instructions: |
+        A function return value should be consistent. It cannot return array in one case and object in another case. It should return the same type of value in all cases, even in catch block.
+
+    - path: "packages/assets/**/*.js"
+      instructions: |
+        With new page route register, use react-loadable to code-split the page. Use import Translation from '../loadables/Translation'; instead of import Translation from '../pages/Translation';. It will help to reduce the bundle size.
+
+    - path: "**/*.js"
+      instructions: |
+        Break down functions into small, well-defined units that handle a single task to improve maintainability, ideally under 100 lines.
+
+    - path: "**/*.js"
+      instructions: |
+        Keep React components small and focused. A component should handle a single responsibility or UI part.
+
+    - path: "packages/assets/*.js"
+      instructions: |
+        Use useContext to avoid deeply nested prop passing in React component.
+
+    - path: "packages/assets/*.js"
+      instructions: |
+        Keep React state localized whenever possible. Avoid using global state unnecessarily.
+
+chat:
+  auto_reply: true

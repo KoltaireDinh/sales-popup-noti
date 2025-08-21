@@ -1,0 +1,62 @@
+.Avada-DesktopPosition {
+  width: 150px;
+  height: 80px;
+  border-radius: 1rem;
+  position: relative;
+  border: 3px solid #f4f6f8;
+  cursor: pointer;
+  .Avada-DesktopPosition__Input {
+    background-color: #f4f6f8;
+    width: 60px;
+    height: 30px;
+
+    position: absolute;
+  }
+  .Avada-DesktopPosition__Input--top-left {
+    top: 5px;
+    left: 5px;
+  }
+  .Avada-DesktopPosition__Input--top-right {
+    top: 5px;
+    right: 5px;
+  }
+  .Avada-DesktopPosition__Input--bottom-right {
+    bottom: 5px;
+    right: 5px;
+  }
+  .Avada-DesktopPosition__Input--bottom-left{
+    bottom: 5px;
+    left: 5px;
+  }
+}
+
+.Avada-DesktopPosition--selected, .Avada-MobilePosition--selected {
+  border-color: #000000 !important;
+  .Avada-DesktopPosition__Input, .Avada-MobilePosition__Input {
+    background-color: #000000 !important;
+  }
+}
+
+.Avada-MobilePosition {
+  width: 80px;
+  height: 100px;
+  border-radius: 1rem;
+  position: relative;
+  border: 3px solid #f4f6f8;
+  cursor: pointer;
+  padding: 5%;
+  .Avada-MobilePosition__Input {
+    background-color: #f4f6f8;
+    width: 90%;
+    height: 20px;
+    border-radius: 1rem;
+    position: absolute;
+  }
+  .Avada-MobilePosition__Input--top {
+    top: 5px;
+  }
+  .Avada-MobilePosition__Input--bottom {
+    bottom: 5px;
+  }
+}
+

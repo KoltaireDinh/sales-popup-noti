@@ -1,0 +1,16 @@
+.Avada__IndexTable-Container {
+  .Polaris-IndexTable__EmptySearchResultWrapper {
+    > div {
+      margin-top: 0;
+      padding: 0;
+    }
+
+    .Polaris-EmptyState__Image.Polaris-EmptyState--loaded {
+      max-height: 200px;
+    }
+  }
+}
+
+.Avada__IndexTable-EmptyState {
+  min-height: 137px;
+}

@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "emulators",
+			"problemMatcher": [],
+			"label": "npm: emulators",
+			"detail": "npx kill-port 8095 && ./node_modules/.bin/firebase emulators:start --only hosting,functions",
+			"env": {
+				"GOOGLE_APPLICATION_CREDENTIALS": "serviceAccount.development.json"
+			}
+		}
+	]
+}
