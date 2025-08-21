@@ -1,4 +1,4 @@
-# app-name
+# Avada-Sales-Noti-PopUP
 
 > Application tag line describe here
 
