@@ -1,13 +1,26 @@
 import {BlockStack, Checkbox, Layout, RangeSlider, Text} from '@shopify/polaris';
+
 import DesktopPositionInput from '../DesktopPositionInput/DesktopPositionInput.js';
 import SettingsCard from '@assets/components/SettingsCard/SettingsCard.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
+import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 function DisplaySettingsTab({input, handleChangeInput}) {
 
   const settings = {...defaultSettings, ...input};
   return (
     <Layout>
       <SettingsCard>
+        <Layout.Section>
+          < NotificationPopup
+            settings={settings}
+            firstName="John Doe"
+            city="New York"
+            country="United States"
+            productName="Puffer Jacket With Hidden Hood"
+            timestamp="a day ago"
+            productImage="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e783e052-9360-4afb-adb8-c4e9c0f5db07/NIKE+AIR+MAX+NUAXIS.png"
+          />
+        </Layout.Section>
         <Layout.Section>
           <div style={{marginTop: '30px'}}>
             <Text variant="headingSm" as="h2" tone="strong">

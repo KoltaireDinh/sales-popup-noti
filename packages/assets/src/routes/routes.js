@@ -15,8 +15,9 @@ const FullscreenPageA = React.lazy(() => import('../pages/FullscreenPageA'));
 const Routes = ({prefix = routePrefix}) => (
   <Suspense fallback={<Loading />}>
     <Switch>
+      <Route exact path={prefix + '/'} component={Tables} />
       <Route exact path={prefix + '/notification'} component={Notification} />
-      <Route exact path={prefix + '/'} component={Home} />
+      <Route exact path={prefix + '/home'} component={Home} />
       <Route exact path={prefix + '/settings'} component={Settings} />
       <Route exact path={prefix + '/fullscreen-page-a'} component={FullscreenPageA} />
       <Route exact path={prefix + '/optional-scopes'} component={OptionalScopes} />

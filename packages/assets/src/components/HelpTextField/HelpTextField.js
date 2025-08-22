@@ -8,7 +8,8 @@ function HelpTextField() {
 
   return (
     <TextField
-      size="medium"
+
+      size="large"
       multiline={true}
       label="Excluded pages"
       type="text"
