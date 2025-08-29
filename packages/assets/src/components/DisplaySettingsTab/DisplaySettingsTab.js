@@ -11,17 +11,6 @@ function DisplaySettingsTab({input, handleChangeInput}) {
     <Layout>
       <SettingsCard>
         <Layout.Section>
-          < NotificationPopup
-            settings={settings}
-            firstName="John Doe"
-            city="New York"
-            country="United States"
-            productName="Puffer Jacket With Hidden Hood"
-            timestamp="a day ago"
-            productImage="https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e783e052-9360-4afb-adb8-c4e9c0f5db07/NIKE+AIR+MAX+NUAXIS.png"
-          />
-        </Layout.Section>
-        <Layout.Section>
           <div style={{marginTop: '30px'}}>
             <Text variant="headingSm" as="h2" tone="strong">
               APPEARANCE
@@ -57,79 +46,79 @@ function DisplaySettingsTab({input, handleChangeInput}) {
             </Text>
           </div>
 
-        <div style={{marginTop: '24px'}}>
-          <Layout>
-            <Layout.Section variant="oneHalf">
-              <BlockStack gap="200">
-                <RangeSlider
-                  label="Display duration"
-                  min={1}
-                  max={15}
-                  step={1}
-                  value={settings.displayDuration}
-                  onChange={(value) => handleChangeInput('displayDuration', value)}
-                  output
-                  suffix="second(s)"
-                />
+          <div style={{marginTop: '24px'}}>
+            <Layout>
+              <Layout.Section variant="oneHalf">
+                <BlockStack gap="200">
+                  <RangeSlider
+                    label="Display duration"
+                    min={1}
+                    max={15}
+                    step={1}
+                    value={settings.displayDuration}
+                    onChange={(value) => handleChangeInput('displayDuration', value)}
+                    output
+                    suffix="second(s)"
+                  />
 
-                <Text variant="bodyMd" tone="subdued">
-                  How long each pop will display on your page.
-                </Text>
-              </BlockStack>
-            </Layout.Section>
-            <Layout.Section variant="oneHalf">
-              <BlockStack gap="200">
-                <RangeSlider
-                  label="Time before the first pop"
-                  min={1}
-                  max={60}
-                  step={1}
-                  value={settings.firstDelay}
-                  onChange={(value) => handleChangeInput('firstDelay', value)}
-                  output
-                  suffix="second(s)"
-                />
-                <Text variant="bodyMd" tone="subdued">
-                  The delay time before the first notification.
-                </Text>
-              </BlockStack>
-            </Layout.Section>
-            <Layout.Section variant="oneHalf">
-              <BlockStack gap="200">
-                <RangeSlider
-                  label="Gap time between two pops"
-                  min={1}
-                  max={10}
-                  step={1}
-                  value={settings.popsInterval}
-                  onChange={(value) => handleChangeInput('popsInterval', value)}
-                  output
-                  suffix="second(s)"
-                />
-                <Text variant="bodyMd" tone="subdued">
-                  The time interval between two popup notifications.
-                </Text>
-              </BlockStack>
-            </Layout.Section>
-            <Layout.Section variant="oneHalf">
-              <BlockStack gap="200">
-                <RangeSlider
-                  label="Maximum of popups"
-                  min={1}
-                  max={80}
-                  step={1}
-                  value={settings.maxPopsDisplay}
-                  onChange={(value) => handleChangeInput('maxPopsDisplay', value)}
-                  output
-                  suffix="pop(s)"
-                />
-                <Text variant="bodyMd" tone="subdued">
-                  The maximum number of popups allowed after page loading. Maximum number is 80.
-                </Text>
-              </BlockStack>
-            </Layout.Section>
-          </Layout>
-        </div>
+                  <Text variant="bodyMd" tone="subdued">
+                    How long each pop will display on your page.
+                  </Text>
+                </BlockStack>
+              </Layout.Section>
+              <Layout.Section variant="oneHalf">
+                <BlockStack gap="200">
+                  <RangeSlider
+                    label="Time before the first pop"
+                    min={1}
+                    max={60}
+                    step={1}
+                    value={settings.firstDelay}
+                    onChange={(value) => handleChangeInput('firstDelay', value)}
+                    output
+                    suffix="second(s)"
+                  />
+                  <Text variant="bodyMd" tone="subdued">
+                    The delay time before the first notification.
+                  </Text>
+                </BlockStack>
+              </Layout.Section>
+              <Layout.Section variant="oneHalf">
+                <BlockStack gap="200">
+                  <RangeSlider
+                    label="Gap time between two pops"
+                    min={1}
+                    max={10}
+                    step={1}
+                    value={settings.popsInterval}
+                    onChange={(value) => handleChangeInput('popsInterval', value)}
+                    output
+                    suffix="second(s)"
+                  />
+                  <Text variant="bodyMd" tone="subdued">
+                    The time interval between two popup notifications.
+                  </Text>
+                </BlockStack>
+              </Layout.Section>
+              <Layout.Section variant="oneHalf">
+                <BlockStack gap="200">
+                  <RangeSlider
+                    label="Maximum of popups"
+                    min={1}
+                    max={80}
+                    step={1}
+                    value={settings.maxPopsDisplay}
+                    onChange={(value) => handleChangeInput('maxPopsDisplay', value)}
+                    output
+                    suffix="pop(s)"
+                  />
+                  <Text variant="bodyMd" tone="subdued">
+                    The maximum number of popups allowed after page loading. Maximum number is 80.
+                  </Text>
+                </BlockStack>
+              </Layout.Section>
+            </Layout>
+          </div>
         </Layout.Section>
       </SettingsCard>
 

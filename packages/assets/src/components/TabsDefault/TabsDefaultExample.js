@@ -1,51 +1,43 @@
 import React, {useCallback, useEffect, useState} from 'react';
-
-import useFetchApi from '@assets/hooks/api/useFetchApi.js';
 import useEditApi from '@assets/hooks/api/useEditApi.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
-import {Button, Card, LegacyTabs, SkeletonPage} from '@shopify/polaris';
+import {Button, Card, LegacyTabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
 import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
 
-
-function TabsDefaultExample() {
+function TabsDefaultExample({fetchData}) {
   const [selected, setSelected] = useState(0);
-  const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
-  const [isSkeletonLoading, setSkeletonLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [settings, setSettings] = useState(fetchData || defaultSettings);
 
-  const {data: fetchedData} = useFetchApi({
-    url: '/settings',
-    defaultSettings
-  });
+  const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
 
   const {handleEdit, loading: saving} = useEditApi({
     url: '/settings'
   });
 
-  const [settings, setSettings] = useState(defaultSettings);
-
+  // Update settings when fetchData prop changes
   useEffect(() => {
-    if (fetchedData) {
-      setSettings(fetchedData);
-      setSkeletonLoading(false);
+    if (fetchData) {
+      setSettings(fetchData);
     }
-  }, [fetchedData]);
-
+  }, [fetchData]);
 
   const handleSave = async () => {
     console.log('Saving settings with the following data:', settings);
     try {
-      setSkeletonLoading(true);
+      setIsLoading(true);
       const result = await handleEdit(settings);
 
       if (result) {
-        setSettings(settings);
+        // Settings successfully saved
+        console.log('Settings saved successfully');
       }
     } catch (error) {
-      console.log(error);
+      console.log('Error saving settings:', error);
     } finally {
-      setSkeletonLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -57,6 +49,7 @@ function TabsDefaultExample() {
     {id: 'display-01', content: 'Display'},
     {id: 'trigger-01', content: 'Trigger'}
   ];
+
   const renderTabContent = () => {
     switch (tabs[selected].id) {
       case 'display-01':
@@ -67,21 +60,29 @@ function TabsDefaultExample() {
         return null;
     }
   };
+
+  // Show loading during save operation
+  if (isLoading) {
+    return <SkeletonLoadingPage />;
+  }
+
   return (
-    <>
-      {isSkeletonLoading ? (
-        <SkeletonLoadingPage></SkeletonLoadingPage>
-      ) : (
-        <Card style={{width: '100%'}}>
-          <LegacyTabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-            {renderTabContent()}
-          </LegacyTabs>
-            <Button primary loading={saving} onClick={handleSave}>
-              {saving ? 'Saving...' : 'Save Settings'}
-            </Button>
-        </Card>
-      )}
-    </>
+    <Card style={{width: '100%'}}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'end',
+          alignItems: 'end',
+        }}
+      >
+        <Button primary loading={saving} onClick={handleSave}>
+          {saving ? 'Saving...' : 'Save Settings'}
+        </Button>
+      </div>
+      <LegacyTabs tabs={tabs} selected={selected} onSelect={handleTabChange} fitted={false} />
+
+      <div style={{padding: '16px'}}>{renderTabContent()}</div>
+    </Card>
   );
 }
 

@@ -1,5 +1,5 @@
 (function() {
-  const BASE_URL = 'https://him-bizarre-compile-frontpage.trycloudflare.com/scripttag';
+  const BASE_URL = 'https://server-quebec-bidding-sum.trycloudflare.com/scripttag';
 
   const scriptElement = document.createElement('script');
   scriptElement.type = 'text/javascript';

@@ -4,9 +4,7 @@ function SettingsCard({children}) {
   return (
     <Layout>
       <Layout.Section>
-        <LegacyCard.Section>
           {children}
-        </LegacyCard.Section>
       </Layout.Section>
     </Layout>
   );

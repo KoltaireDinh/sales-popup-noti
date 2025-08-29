@@ -1,0 +1,22 @@
+{
+  orders(first: 30, reverse: true) {
+  edges {
+      nodes {
+        id
+        name
+        totalPriceSet {
+          shopMoney {
+            amount
+            currencyCode
+          }
+        }
+        
+
+
+      }
+  }
+
+
+
+  }
+}

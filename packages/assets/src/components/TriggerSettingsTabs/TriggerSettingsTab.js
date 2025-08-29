@@ -34,7 +34,7 @@ function TriggerSettingsTab({input, handleChangeInput}) {
                       value={settings.includedUrls}
                       onChange={value => handleChangeInput('includedUrls', value)}
                       helpText="Page URLs to show the pop-up (separated by new lines)"
-                     autoComplete="email"/>
+                      autoComplete="email"/>
                   )}
                   <TextField
                     size="large"

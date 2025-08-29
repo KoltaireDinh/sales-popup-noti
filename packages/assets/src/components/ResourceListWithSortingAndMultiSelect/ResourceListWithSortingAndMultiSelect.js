@@ -1,45 +1,30 @@
-import {Card, ResourceItem, ResourceList} from '@shopify/polaris';
-
 import React, {useState} from 'react';
+import {Card, ResourceItem, ResourceList} from '@shopify/polaris';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 
-function ResourceListWithSortingAndMultiSelect() {
+function ResourceListWithSortingAndMultiSelect({ items = [] }) {
   const [selectedItems, setSelectedItems] = useState([]);
   const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
-
-  const items = [
-    {
-      id: '1',
-      firstName : 'John Doe',
-      city : 'New York',
-      country : 'United States',
-      productName : 'Puffer Jacket With Hidden Hood',
-      timestamp : 'a day ago',
-      productImage : 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e783e052-9360-4afb-adb8-c4e9c0f5db07/NIKE+AIR+MAX+NUAXIS.png'
-    },
-    {
-      id: '1',
-      firstName : 'John Doe',
-      city : 'New York',
-      country : 'United States',
-      productName : 'Puffer Jacket With Hidden Hood',
-      timestamp : 'a day ago',
-      productImage : 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e783e052-9360-4afb-adb8-c4e9c0f5db07/NIKE+AIR+MAX+NUAXIS.png'
-    },
-    {
-      id: '1',
-      firstName : 'John Doe',
-      city : 'New York',
-      country : 'United States',
-      productName : 'Puffer Jacket With Hidden Hood',
-      timestamp : 'a day ago',
-      productImage : 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/e783e052-9360-4afb-adb8-c4e9c0f5db07/NIKE+AIR+MAX+NUAXIS.png'
-    }
-  ];
 
   const resourceName = {
     singular: 'notification',
     plural: 'notifications'
+  };
+
+  const renderItem = (item) => {
+    const {id, firstName, city, country, productName, timestamp, productImage} = item;
+    return (
+      <ResourceItem id={id}>
+        <NotificationPopup
+          firstName={firstName}
+          city={city}
+          country={country}
+          productName={productName}
+          timestamp={timestamp}
+          productImage={productImage}
+        />
+      </ResourceItem>
+    );
   };
 
   return (
@@ -67,21 +52,6 @@ function ResourceListWithSortingAndMultiSelect() {
       />
     </Card>
   );
-
-  function renderItem(item) {
-    const {id, firstName, city, country, productName, timestamp, productImage} = item;
-    return (
-      <ResourceItem id={id}>
-        <NotificationPopup
-          firstName={firstName}
-          city={city}
-          country={country}
-          productName={productName}
-          timestamp={timestamp}
-          productImage={productImage}
-        ></NotificationPopup>
-      </ResourceItem>
-    );
-  }
 }
+
 export default ResourceListWithSortingAndMultiSelect;
