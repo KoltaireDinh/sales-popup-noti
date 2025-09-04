@@ -1,11 +1,10 @@
 import React from 'react';
 
 import {Layout, Page} from '@shopify/polaris';
-import TabsDefaultExample from '@assets/components/TabsDefault/TabsDefaultExample.js';
-import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
 import usePaginate from '@assets/hooks/api/usePaginate.js';
-import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
+import SettingsSkeleton from '@assets/components/SkeletonComponents/SettingsSkeleton.js';
+import TabsContainer from '@assets/components/TabsDefault/TabsContainer.js';
 
 /**
  * @return {JSX.Element}
@@ -23,14 +22,12 @@ export default function Settings() {
           style={{
             marginTop: '15px'
           }}
-        >
-        </div>
-
+        ></div>
         <Layout.Section>
           {loading ? (
-            <SkeletonLoadingPage />
+            <SettingsSkeleton />
           ) : (
-            <TabsDefaultExample loading={loading} fetchData={settings} />
+            <TabsContainer loading={loading} fetchData={settings} />
           )}
         </Layout.Section>
       </Layout>

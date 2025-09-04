@@ -96,10 +96,7 @@ export async function syncOrdersWithGraphQL({shopDomain, accessToken}, limit = 3
 
       notifications.push(notification);
     }
-
-    console.log(`Creating ${notifications.length} notifications in Firestore...`);
     await notificationRepository.create(notifications);
-
     console.log(`Synced ${notifications.length} notifications for ${shopDomain}`);
   } catch (err) {
     console.error('Error syncing orders with GraphQL:', {
@@ -231,14 +228,12 @@ export const createDefaultSettings = async ({shopId, shopDomain}) => {
       shopId: shopId,
       shopDomain: shopDomain
     });
-    if (!defaultData) {
-      console.log('❌ Error when creating default settings');
-    } else {
-      console.log('✅ Default settings created successfully');
+    if (defaultData) {
+      console.log('Created default settings');
+      return defaultData;
     }
-    return defaultData;
   } catch (error) {
-    console.error('❌ Error creating default settings:', error);
+    console.error('Error creating default settings:', error);
     throw error;
   }
 };
