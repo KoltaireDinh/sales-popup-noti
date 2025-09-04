@@ -1,4 +1,4 @@
-import {BlockStack, Layout, LegacyCard, Text, TextField} from '@shopify/polaris';
+import {BlockStack, Layout, Text, TextField} from '@shopify/polaris';
 
 import SelectExample from '@assets/components/SelectExample/SelectExample.js';
 import {value} from 'firebase-tools/lib/deploymentTool.js';
@@ -10,49 +10,47 @@ function TriggerSettingsTab({input, handleChangeInput}) {
   return (
     <Layout>
       <Layout.Section>
-        <LegacyCard.Section>
-          <div style={{marginTop: '15px'}}>
-            <Text variant="headingSm" as="h2" tone="strong">
-              PAGES RESTRICTION
-            </Text>
-          </div>
+        <div style={{marginTop: '15px'}}>
+          <Text variant="headingSm" as="h2" tone="strong">
+            PAGES RESTRICTION
+          </Text>
+        </div>
 
-          <div style={{marginTop: '20px'}}>
-            <Layout>
-              <Layout.Section>
-                <BlockStack gap="200">
-                  <SelectExample
-                    onChange={value => handleChangeInput('allowShow', value)}
-                    value={settings.allowShow}
-                  />
+        <div style={{marginTop: '20px'}}>
+          <Layout>
+            <Layout.Section>
+              <BlockStack gap="200">
+                <SelectExample
+                  onChange={value => handleChangeInput('allowShow', value)}
+                  value={settings.allowShow}
+                />
 
-                  {settings.allowShow === 'specific' && (
-                    <TextField
-                      size="large"
-                      multiline
-                      label="Included pages"
-                      value={settings.includedUrls}
-                      onChange={value => handleChangeInput('includedUrls', value)}
-                      helpText="Page URLs to show the pop-up (separated by new lines)"
-                      autoComplete="email"/>
-                  )}
+                {settings.allowShow === 'specific' && (
                   <TextField
                     size="large"
                     multiline
-                    label="Excluded pages"
-                    value={settings.excludedUrls}
-                    onChange={value => handleChangeInput('excludedUrls', value)}
-                    helpText="Pages URLs NOT to show the pop-up (separated by new lines)"
+                    label="Included pages"
+                    value={settings.includedUrls}
+                    onChange={value => handleChangeInput('includedUrls', value)}
+                    helpText="Page URLs to show the pop-up (separated by new lines)"
                     autoComplete="email"
                   />
-                </BlockStack>
-              </Layout.Section>
+                )}
+                <TextField
+                  size="large"
+                  multiline
+                  label="Excluded pages"
+                  value={settings.excludedUrls}
+                  onChange={value => handleChangeInput('excludedUrls', value)}
+                  helpText="Pages URLs NOT to show the pop-up (separated by new lines)"
+                  autoComplete="email"
+                />
+              </BlockStack>
+            </Layout.Section>
 
-              <Layout.Section>
-              </Layout.Section>
-            </Layout>
-          </div>
-        </LegacyCard.Section>
+            <Layout.Section></Layout.Section>
+          </Layout>
+        </div>
       </Layout.Section>
     </Layout>
   );

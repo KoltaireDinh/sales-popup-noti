@@ -12,12 +12,19 @@ const collection = firestore.collection('notifications');
 
 /**
  * Creates a single notification document in Firestore
- * @param {Object} data - The notification data to create
  * @returns {Promise<string>} The ID of the created notification document
+ * @param notificationData
  */
-export async function createOne(data) {
-  const created = await collection.add(data);
-  return created.id;
+export async function createOne(notificationData) {
+  console.log('Inserting notification:', notificationData);
+  try {
+    const docRef = await firestore.collection('notifications').add(notificationData);
+    console.log('Notification inserted with ID:', docRef.id);
+    return docRef;
+  } catch (err) {
+    console.error('Error inserting notification:', err);
+    throw err;
+  }
 }
 
 /**
@@ -32,7 +39,7 @@ export async function create(dataList) {
 /**
  * Retrieves notifications with pagination support
  * @param {Object} params - Query parameters
- * @param {string} params.shopId - The shop ID to filter notifications by
+ * @param {string} params.shopDomain - The shop ID to filter notifications by
  * @param {string} [params.after] - Cursor for pagination (document ID to start after)
  * @param {string} [params.before] - Cursor for pagination (document ID to start before)
  * @param {number} [params.limit] - Maximum number of documents to return
@@ -40,16 +47,22 @@ export async function create(dataList) {
  * @param {boolean} [params.hasCount] - Whether to include total count in response
  * @returns {Promise<Object>} Paginated notification results
  */
-export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
-  let queriedRef = collection;
-  queriedRef = queriedRef.where('shopId', '==', shopId);
-  queriedRef = queriedRef.orderBy('createdAt', 'desc');
-
-  return await paginateQuery({
-    queriedRef,
-    collection,
-    query: {after, before, limit, withDocs, hasCount}
-  });
+export async function get({shopDomain, after, before, limit = 10, withDocs, hasCount}) {
+  try {
+    let queriedRef = collection;
+    queriedRef = queriedRef.where('shopDomain', '==', shopDomain);
+    queriedRef = queriedRef.orderBy('createdAt', 'asc');
+    const [result] = await Promise.all([
+      paginateQuery({
+        queriedRef,
+        collection,
+        query: {after, before, limit, withDocs, hasCount}
+      })
+    ]);
+    return result;
+  } catch (error) {
+    throw error;
+  }
 }
 
 /**
@@ -60,7 +73,7 @@ export async function get({shopId, after, before, limit = 10, withDocs, hasCount
 export async function getByDomain(shopDomain) {
   const docs = await collection
     .where('shopDomain', '==', shopDomain)
-    .orderBy('created_at', 'desc')
+    .orderBy('createdAt', 'desc')
     .get();
   return docs.docs.map(doc => ({
     ...doc.data()

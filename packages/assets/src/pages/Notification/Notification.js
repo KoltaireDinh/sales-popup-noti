@@ -1,9 +1,6 @@
-// File: Notification.js
-
 import React from 'react';
-import {Layout, Page} from '@shopify/polaris';
-import ResourceListWithSortingAndMultiSelect
-  from '@assets/components/ResourceListWithSortingAndMultiSelect/ResourceListWithSortingAndMultiSelect';
+import { Layout, Page } from '@shopify/polaris';
+import ResourceListWithSortingAndMultiSelect from '@assets/components/ResourceListWithSortingAndMultiSelect/ResourceListWithSortingAndMultiSelect';
 import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
 import usePaginate from '@assets/hooks/api/usePaginate.js';
 
@@ -11,20 +8,17 @@ import usePaginate from '@assets/hooks/api/usePaginate.js';
  * @return {JSX.Element}
  */
 export default function Notification() {
-
-  const {data: notifications, loading: isSkeletonLoading, pageInfo} = usePaginate({
-    url: '/notification'
+  const { loading: isSkeletonLoading } = usePaginate({
+    url: '/notifications',
   });
+
   return (
-    <Page fullWidth title="Notification" subtitle="List of sales notifcation from Shopify">
+    <Page fullWidth title="Notification" subtitle="List of sales notification from Shopify">
       {isSkeletonLoading ? (
         <SkeletonLoadingPage />
       ) : (
         <Layout sectioned>
-          <ResourceListWithSortingAndMultiSelect
-            notifications={notifications}
-            pageInfo={pageInfo}
-          />
+          <ResourceListWithSortingAndMultiSelect />
         </Layout>
       )}
     </Page>

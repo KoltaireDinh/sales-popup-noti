@@ -5,7 +5,7 @@ export const navigationLinks = [
   },
   {
     label: 'Notification',
-    destination: '/notification'
+    destination: '/notifications'
   },
   {
     label: 'Settings',

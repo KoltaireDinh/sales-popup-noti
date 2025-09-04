@@ -28,3 +28,19 @@ export async function getOne(id) {
 export async function updateOne(shopData, data) {
   return collection.doc(shopData.id).set({...data, updatedAt: new Date()}, {merge: true});
 }
+
+/**
+ * create settings
+ * @param data
+ * @param shopId
+ * @returns {Promise<string>}
+ */
+export async function createOne({data, shopId}) {
+  try {
+    const settingsDocRef = await collection.add({...data, shopId: shopId});
+    console.log('Settings Document created with Id', settingsDocRef.id);
+    return settingsDocRef.id;
+  } catch (error) {
+    console.error('Error when creating settings', error);
+  }
+}

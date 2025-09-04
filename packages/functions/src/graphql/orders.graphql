@@ -1,22 +1,36 @@
-{
-  orders(first: 30, reverse: true) {
-  edges {
-      nodes {
+query ($first: Int!) {
+  orders(first: $first) {
+    edges {
+      node {
         id
-        name
-        totalPriceSet {
-          shopMoney {
-            amount
-            currencyCode
+        createdAt
+        customer {
+          firstName
+          defaultAddress {
+            city
+            country
           }
         }
-        
-
-
+        lineItems(first: 1) {
+          edges {
+            node {
+              title
+              product {
+                images(first: 1) {
+                  edges {
+                    node {
+                      url
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
+    }
   }
-
-
-
+  shop {
+    myshopifyDomain
   }
 }

@@ -1,10 +1,9 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import useEditApi from '@assets/hooks/api/useEditApi.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
-import {Button, Card, LegacyTabs} from '@shopify/polaris';
+import {Button, Card, InlineStack, Tabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
-import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
 
 function TabsDefaultExample({fetchData}) {
   const [selected, setSelected] = useState(0);
@@ -13,7 +12,7 @@ function TabsDefaultExample({fetchData}) {
 
   const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
 
-  const {handleEdit, loading: saving} = useEditApi({
+  const {handleEdit} = useEditApi({
     url: '/settings'
   });
 
@@ -31,7 +30,6 @@ function TabsDefaultExample({fetchData}) {
       const result = await handleEdit(settings);
 
       if (result) {
-        // Settings successfully saved
         console.log('Settings saved successfully');
       }
     } catch (error) {
@@ -60,26 +58,21 @@ function TabsDefaultExample({fetchData}) {
         return null;
     }
   };
-
-  // Show loading during save operation
-  if (isLoading) {
-    return <SkeletonLoadingPage />;
-  }
-
   return (
     <Card style={{width: '100%'}}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'end',
-          alignItems: 'end',
-        }}
-      >
-        <Button primary loading={saving} onClick={handleSave}>
-          {saving ? 'Saving...' : 'Save Settings'}
+      <InlineStack align={'space-between'}>
+        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange} />
+        <Button
+          primary
+          loading={isLoading}
+          onClick={handleSave}
+          size={'medium'}
+          variant={'primary'}
+          tone={'success'}
+        >
+          Save Settings
         </Button>
-      </div>
-      <LegacyTabs tabs={tabs} selected={selected} onSelect={handleTabChange} fitted={false} />
+      </InlineStack>
 
       <div style={{padding: '16px'}}>{renderTabContent()}</div>
     </Card>

@@ -1,53 +1,41 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Card, ResourceItem, ResourceList} from '@shopify/polaris';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
+import useFetchApi from '@assets/hooks/api/useFetchApi.js';
 
-function ResourceListWithSortingAndMultiSelect({ items = [] }) {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
+function ResourceListWithSortingAndMultiSelect() {
+  const {data, loading, pageInfo, nextPage, prevPage} = useFetchApi({
+    url: '/notifications'
+  });
 
   const resourceName = {
     singular: 'notification',
     plural: 'notifications'
   };
 
-  const renderItem = (item) => {
-    const {id, firstName, city, country, productName, timestamp, productImage} = item;
-    return (
-      <ResourceItem id={id}>
-        <NotificationPopup
-          firstName={firstName}
-          city={city}
-          country={country}
-          productName={productName}
-          timestamp={timestamp}
-          productImage={productImage}
-        />
-      </ResourceItem>
-    );
-  };
-
   return (
     <Card padding="0">
       <ResourceList
         resourceName={resourceName}
-        items={items}
-        selectedItems={selectedItems}
-        onSelectionChange={setSelectedItems}
-        renderItem={renderItem}
-        selectable
-        sortValue={sortValue}
-        sortOptions={[
-          {label: 'Newest update', value: 'DATE_MODIFIED_DESC'},
-          {label: 'Oldest update', value: 'DATE_MODIFIED_ASC'}
-        ]}
+        items={data}
+        loading={loading}
+        renderItem={item => (
+          <ResourceItem id={item.id}>
+            <NotificationPopup
+              firstName={item.firstName}
+              city={item.city}
+              country={item.country}
+              productName={item.productName}
+              productImage={item.productImage}
+              createdAt={item.createdAt}
+            />
+          </ResourceItem>
+        )}
         pagination={{
-          hasNext: true,
-          onNext: () => {}
-        }}
-        onSortChange={selected => {
-          setSortValue(selected);
-          console.log(`Sort option changed to ${selected}.`);
+          onNext: nextPage,
+          onPrevious: prevPage,
+          hasNext: !!pageInfo?.hasNext,
+          hasPrevious: !!pageInfo?.hasPrevious
         }}
       />
     </Card>

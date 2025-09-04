@@ -1,24 +1,24 @@
-import {getCurrentShop} from '@functions/helpers/auth';
-import * as notificationRepository from '@functions/repositories/notificationRepository';
+import {getCurrentShop, getCurrentShopData} from '@functions/helpers/auth';
 
+import * as notificationRepository from '@functions/repositories/notificationRepository';
 /**
- * Retrieves paginated notifications for the current authenticated shop
- * Supports pagination with cursor-based navigation
- * @param {Object} ctx - Koa context object
- * @returns {Promise<void>} Resolves with paginated notification data
+ *
+ * @param ctx
+ * @returns {Promise<void>}
  */
 export async function getNotifications(ctx) {
   try {
-    const shopId = getCurrentShop(ctx);
-    const {after, before, limit, hasCount} = ctx.query;
+    const shopData = getCurrentShopData(ctx);
+    const {limit, after, before, hasCount} = ctx.query;
     const data = await notificationRepository.get({
-      shopId,
+      shopDomain: shopData.shopifyDomain,
       after,
       before,
       limit: limit,
       hasCount: hasCount === 'true'
     });
-    ctx.body = {...data, shopId, success: true};
+    console.log('Fetched notifications', data);
+    ctx.body = {...data, shopData: {}, success: true};
   } catch (e) {
     console.error(e);
     ctx.body = {data: [], shopData: {}, success: false};

@@ -1,6 +1,6 @@
 import App from 'koa';
 import 'isomorphic-fetch';
-import {contentSecurityPolicy, shopifyAuth} from '@avada/core';
+import {contentSecurityPolicy, getShopByShopifyDomain, shopifyAuth} from '@avada/core';
 import shopifyConfig from '@functions/config/shopify';
 import render from 'koa-ejs';
 import path from 'path';
@@ -8,6 +8,7 @@ import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
+import {createDefaultSettings, syncOrdersWithGraphQL} from '@functions/services/shopifyService';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -46,12 +47,43 @@ app.use(
     hostName: appConfig.baseUrl,
     isEmbeddedApp: true,
     afterThemePublish: ctx => {
-      // Publish assets when theme is published or changed here
+      // TODO: Publish assets when theme is published or changed here
       return (ctx.body = {
         success: true
       });
     },
-    optionalScopes: shopifyOptionalScopes
+    optionalScopes: shopifyOptionalScopes,
+    // TODO: Handle post-installation tasks (sync 30 orders, setup shop data, register webhooks, create default settings)
+    afterInstall: async ctx => {
+      try {
+        const shopifyDomain = ctx.state.shopify.shop;
+        const accessToken = ctx.state.shopify.accessToken;
+        console.log('After Install Triggered:', {shopifyDomain, accessToken});
+
+        const shopData = await getShopByShopifyDomain(shopifyDomain, accessToken);
+        console.log('Fetched shop data:', shopData);
+
+        /* await Promise.allSettled([
+          syncOrdersSimple(shopifyDomain, accessToken),
+          createDefaultSettings({shopId: shopData.id, shopDomain: shopifyDomain})
+        ]); */
+
+        await Promise.allSettled([
+          syncOrdersWithGraphQL({
+            shopDomain: shopifyDomain,
+            accessToken: accessToken
+          }),
+          // TODO: Create default settings
+          createDefaultSettings({shopId: shopData.id, shopDomain: shopifyDomain})
+
+          // TODO: Register webhooks
+        ]);
+      } catch (err) {
+        console.error('afterInstall ERROR', err);
+        throw err;
+      }
+    }
+    // TODO: Handle login events
   }).routes()
 );
 
