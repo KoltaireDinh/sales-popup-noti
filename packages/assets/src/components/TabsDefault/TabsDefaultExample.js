@@ -1,32 +1,26 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import useEditApi from '@assets/hooks/api/useEditApi.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
-import {Button, Card, InlineStack, Tabs} from '@shopify/polaris';
+import {Button, Card, InlineStack, Layout, Tabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
+import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
+import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
+
 
 function TabsDefaultExample({fetchData}) {
   const [selected, setSelected] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
   const [settings, setSettings] = useState(fetchData || defaultSettings);
 
   const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
 
-  const {handleEdit} = useEditApi({
+  const {handleEdit, editing} = useEditApi({
     url: '/settings'
   });
-
-  // Update settings when fetchData prop changes
-  useEffect(() => {
-    if (fetchData) {
-      setSettings(fetchData);
-    }
-  }, [fetchData]);
 
   const handleSave = async () => {
     console.log('Saving settings with the following data:', settings);
     try {
-      setIsLoading(true);
       const result = await handleEdit(settings);
 
       if (result) {
@@ -34,8 +28,6 @@ function TabsDefaultExample({fetchData}) {
       }
     } catch (error) {
       console.log('Error saving settings:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -59,23 +51,35 @@ function TabsDefaultExample({fetchData}) {
     }
   };
   return (
-    <Card style={{width: '100%'}}>
-      <InlineStack align={'space-between'}>
-        <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange} />
-        <Button
-          primary
-          loading={isLoading}
-          onClick={handleSave}
-          size={'medium'}
-          variant={'primary'}
-          tone={'success'}
-        >
-          Save Settings
-        </Button>
-      </InlineStack>
+    <Layout>
+      <div
+      style={{marginTop: '1rem', marginLeft: '1rem'}}>
+        <NotificationPopup />
+      </div>
 
-      <div style={{padding: '16px'}}>{renderTabContent()}</div>
-    </Card>
+      <Layout.Section>
+        <Card>
+          <InlineStack align={'space-between'}>
+            <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange} />
+            <Button
+              primary
+              loading={editing}
+              onClick={handleSave}
+              size={'medium'}
+              variant={'primary'}
+              tone={'success'}
+            >
+              Save Settings
+            </Button>
+          </InlineStack>
+          {editing ? (
+            <SkeletonLoadingPage />
+          ) : (
+            <div style={{padding: '16px'}}>{renderTabContent()}</div>
+          )}
+        </Card>
+      </Layout.Section>
+    </Layout>
   );
 }
 

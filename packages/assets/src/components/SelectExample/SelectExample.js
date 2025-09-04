@@ -1,7 +1,5 @@
 import {Select} from '@shopify/polaris';
 
-import {useState, useCallback, useEffect} from 'react';
-
 
 function SelectExample({ value, onChange }) {
   const options = [
@@ -11,7 +9,6 @@ function SelectExample({ value, onChange }) {
 
   return (
     <Select
-      label="Pages restriction"
       options={options}
       value={value}
       onChange={newValue => onChange(newValue)}

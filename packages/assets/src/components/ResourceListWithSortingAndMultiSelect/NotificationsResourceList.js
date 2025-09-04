@@ -3,7 +3,7 @@ import {Card, ResourceItem, ResourceList} from '@shopify/polaris';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 import useFetchApi from '@assets/hooks/api/useFetchApi.js';
 
-function ResourceListWithSortingAndMultiSelect() {
+function NotificationsResourceList() {
   const {data, loading, pageInfo, nextPage, prevPage} = useFetchApi({
     url: '/notifications'
   });
@@ -42,4 +42,4 @@ function ResourceListWithSortingAndMultiSelect() {
   );
 }
 
-export default ResourceListWithSortingAndMultiSelect;
+export default NotificationsResourceList;

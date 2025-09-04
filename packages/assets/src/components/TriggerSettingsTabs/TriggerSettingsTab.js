@@ -10,25 +10,26 @@ function TriggerSettingsTab({input, handleChangeInput}) {
   return (
     <Layout>
       <Layout.Section>
-        <div style={{marginTop: '15px'}}>
           <Text variant="headingSm" as="h2" tone="strong">
             PAGES RESTRICTION
           </Text>
-        </div>
-
-        <div style={{marginTop: '20px'}}>
           <Layout>
             <Layout.Section>
-              <BlockStack gap="200">
-                <SelectExample
-                  onChange={value => handleChangeInput('allowShow', value)}
-                  value={settings.allowShow}
-                />
+              <BlockStack
+              gap={"200"}>
+                <div
+                style={{marginTop: '1.5rem'}}>
+                  <SelectExample
+                    onChange={value => handleChangeInput('allowShow', value)}
+                    value={settings.allowShow}
+                  />
+                </div>
+
 
                 {settings.allowShow === 'specific' && (
                   <TextField
                     size="large"
-                    multiline
+                    multiline={6}
                     label="Included pages"
                     value={settings.includedUrls}
                     onChange={value => handleChangeInput('includedUrls', value)}
@@ -38,7 +39,7 @@ function TriggerSettingsTab({input, handleChangeInput}) {
                 )}
                 <TextField
                   size="large"
-                  multiline
+                  multiline={6}
                   label="Excluded pages"
                   value={settings.excludedUrls}
                   onChange={value => handleChangeInput('excludedUrls', value)}
@@ -47,10 +48,7 @@ function TriggerSettingsTab({input, handleChangeInput}) {
                 />
               </BlockStack>
             </Layout.Section>
-
-            <Layout.Section></Layout.Section>
           </Layout>
-        </div>
       </Layout.Section>
     </Layout>
   );

@@ -1,15 +1,17 @@
 import React from 'react';
-import { Layout, Page } from '@shopify/polaris';
-import ResourceListWithSortingAndMultiSelect from '@assets/components/ResourceListWithSortingAndMultiSelect/ResourceListWithSortingAndMultiSelect';
+import {Layout, Page} from '@shopify/polaris';
+import NotificationsResourceList from '@assets/components/ResourceListWithSortingAndMultiSelect/NotificationsResourceList.js';
 import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
 import usePaginate from '@assets/hooks/api/usePaginate.js';
+
+
 
 /**
  * @return {JSX.Element}
  */
 export default function Notification() {
-  const { loading: isSkeletonLoading } = usePaginate({
-    url: '/notifications',
+  const {loading: isSkeletonLoading} = usePaginate({
+    url: '/notifications'
   });
 
   return (
@@ -18,7 +20,7 @@ export default function Notification() {
         <SkeletonLoadingPage />
       ) : (
         <Layout sectioned>
-          <ResourceListWithSortingAndMultiSelect />
+          <NotificationsResourceList />
         </Layout>
       )}
     </Page>

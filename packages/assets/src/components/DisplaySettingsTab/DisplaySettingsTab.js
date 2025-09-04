@@ -3,50 +3,40 @@ import {BlockStack, Checkbox, Layout, RangeSlider, Text} from '@shopify/polaris'
 import DesktopPositionInput from '../DesktopPositionInput/DesktopPositionInput.js';
 import SettingsCard from '@assets/components/SettingsCard/SettingsCard.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
-import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
-function DisplaySettingsTab({input, handleChangeInput}) {
 
+function DisplaySettingsTab({input, handleChangeInput}) {
   const settings = {...defaultSettings, ...input};
   return (
     <Layout>
       <SettingsCard>
         <Layout.Section>
-          <div style={{marginTop: '30px'}}>
+          <BlockStack gap="400">
             <Text variant="headingSm" as="h2" tone="strong">
               APPEARANCE
             </Text>
-          </div>
 
-          <div style={{marginTop: '20px'}}>
             <DesktopPositionInput
               label="Desktop position"
               value={settings.position}
-              onChange={(value) => handleChangeInput('position', value)}
+              onChange={value => handleChangeInput('position', value)}
               helpText="The display position of the popup on your website."
-            />
-
-            <div style={{marginTop: '12px'}}>
-              <BlockStack gap="200">
-                <Checkbox
-                  label="Hide time ago"
-                  checked={settings.hideTimeAgo}
-                  onChange={(checked) => handleChangeInput('hideTimeAgo', checked)}
-                />
-                <Checkbox
-                  label="Truncate content text"
-                  checked={settings.truncateProductName}
-                  onChange={(checked) => handleChangeInput('truncateProductName', checked)}
-                />
-              </BlockStack>
-            </div>
-          </div>
-          <div style={{marginTop: '24px'}}>
+            ></DesktopPositionInput>
+            <BlockStack gap="200">
+              <Checkbox
+                label="Hide time ago"
+                checked={settings.hideTimeAgo}
+                onChange={checked => handleChangeInput('hideTimeAgo', checked)}
+              />
+              <Checkbox
+                label="Truncate content text"
+                checked={settings.truncateProductName}
+                onChange={checked => handleChangeInput('truncateProductName', checked)}
+              />
+            </BlockStack>
             <Text variant="headingSm" as="h2" tone="strong">
               TIMING
             </Text>
-          </div>
 
-          <div style={{marginTop: '24px'}}>
             <Layout>
               <Layout.Section variant="oneHalf">
                 <BlockStack gap="200">
@@ -56,7 +46,7 @@ function DisplaySettingsTab({input, handleChangeInput}) {
                     max={15}
                     step={1}
                     value={settings.displayDuration}
-                    onChange={(value) => handleChangeInput('displayDuration', value)}
+                    onChange={value => handleChangeInput('displayDuration', value)}
                     output
                     suffix="second(s)"
                   />
@@ -74,7 +64,7 @@ function DisplaySettingsTab({input, handleChangeInput}) {
                     max={60}
                     step={1}
                     value={settings.firstDelay}
-                    onChange={(value) => handleChangeInput('firstDelay', value)}
+                    onChange={value => handleChangeInput('firstDelay', value)}
                     output
                     suffix="second(s)"
                   />
@@ -91,7 +81,7 @@ function DisplaySettingsTab({input, handleChangeInput}) {
                     max={10}
                     step={1}
                     value={settings.popsInterval}
-                    onChange={(value) => handleChangeInput('popsInterval', value)}
+                    onChange={value => handleChangeInput('popsInterval', value)}
                     output
                     suffix="second(s)"
                   />
@@ -108,7 +98,7 @@ function DisplaySettingsTab({input, handleChangeInput}) {
                     max={80}
                     step={1}
                     value={settings.maxPopsDisplay}
-                    onChange={(value) => handleChangeInput('maxPopsDisplay', value)}
+                    onChange={value => handleChangeInput('maxPopsDisplay', value)}
                     output
                     suffix="pop(s)"
                   />
@@ -118,11 +108,9 @@ function DisplaySettingsTab({input, handleChangeInput}) {
                 </BlockStack>
               </Layout.Section>
             </Layout>
-          </div>
+          </BlockStack>
         </Layout.Section>
       </SettingsCard>
-
-
     </Layout>
   );
 }

@@ -5,12 +5,13 @@ import TabsDefaultExample from '@assets/components/TabsDefault/TabsDefaultExampl
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
 import usePaginate from '@assets/hooks/api/usePaginate.js';
+import SkeletonLoadingPage from '@assets/components/SkeletonPage/SkeletonLoadingPage.js';
 
 /**
  * @return {JSX.Element}
  */
 export default function Settings() {
-  const {data: settings} = usePaginate({
+  const {data: settings, loading} = usePaginate({
     url: '/settings',
     defaultSettings
   });
@@ -23,11 +24,14 @@ export default function Settings() {
             marginTop: '15px'
           }}
         >
-          <NotificationPopup />
         </div>
 
         <Layout.Section>
-          <TabsDefaultExample fetchData={settings} />
+          {loading ? (
+            <SkeletonLoadingPage />
+          ) : (
+            <TabsDefaultExample loading={loading} fetchData={settings} />
+          )}
         </Layout.Section>
       </Layout>
     </Page>
