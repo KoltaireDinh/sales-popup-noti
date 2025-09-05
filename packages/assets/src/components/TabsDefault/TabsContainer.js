@@ -5,7 +5,7 @@ import {Button, Card, InlineStack, Layout, Tabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
-import SettingsSkeleton from '@assets/components/SkeletonComponents/SettingsSkeleton.js';
+import * as Icon from '@shopify/polaris-icons';
 
 
 function TabsContainer({fetchData}) {
@@ -60,7 +60,13 @@ function TabsContainer({fetchData}) {
       <Layout.Section>
         <Card>
           <InlineStack align={'space-between'}>
-            <Tabs fitted={true} tabs={tabs} selected={selected} onSelect={handleTabChange} />
+            <Tabs
+              fitted={true}
+              tabs={tabs}
+              selected={selected}
+              onSelect={handleTabChange}
+              loading={editing}
+            />
             <Button
               primary
               loading={editing}

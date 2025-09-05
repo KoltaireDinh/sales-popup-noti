@@ -19,7 +19,7 @@ export default function usePaginate({
   initLoad = true,
   keepPreviousData = false,
   presentData = null,
-  defaultLimit = 20,
+  defaultLimit = 10,
   defaultSort = 'createdAt:asc',
   searchKey = 'searchKey',
   initQueries = {}

@@ -90,7 +90,7 @@ export async function syncOrdersWithGraphQL({shopDomain, accessToken}, limit = 3
         country: customer?.defaultAddress?.country || 'Unknown',
         productId: lineItem?.product?.id || node.id,
         productImage: productImage || '',
-        productName: lineItem?.name || 'Unknown Product',
+        productName: lineItem?.title || 'Unknown Product',
         createdAt: new Date(node.createdAt)
       };
 
