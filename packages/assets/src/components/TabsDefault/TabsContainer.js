@@ -54,7 +54,7 @@ function TabsContainer({fetchData}) {
   return (
     <Layout>
       <div style={{marginTop: '1rem', marginLeft: '1rem'}}>
-        <NotificationPopup />
+        <NotificationPopup settings={settings} />
       </div>
 
       <Layout.Section>
