@@ -131,7 +131,7 @@ __metadata:
   resolution: "@avada/app@workspace:."
   dependencies:
     "@avada/console": "npm:1.0.0"
-    "@shopify/cli": "npm:3.83.0-alpha.0"
+    "@shopify/cli": "npm:^3.84.1"
     babel-jest: "npm:^24.9.0"
     concurrently: "npm:^7.6.0"
     delay-cli: "npm:2.0.0"
@@ -4832,16 +4832,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shopify/cli@npm:3.83.0-alpha.0":
-  version: 3.83.0-alpha.0
-  resolution: "@shopify/cli@npm:3.83.0-alpha.0"
+"@shopify/cli@npm:^3.84.1":
+  version: 3.84.1
+  resolution: "@shopify/cli@npm:3.84.1"
   dependencies:
     "@ast-grep/napi": "npm:0.33.0"
     esbuild: "npm:0.25.5"
     global-agent: "npm:3.0.0"
   bin:
     shopify: bin/run.js
-  checksum: 10c0/c32e5e545ac5586c01cbae733f3a1163876ae1e06dc96e42474dbc8a061ffffe1bae52e9a31cb60ecab545b9e643210c7bdbf296da4c70adb858a4f9dc2629ca
+  checksum: 10c0/fa5ded854e39df2fe1e21421e1e90f36a0c44048f90334e95caf05eb3ead57cb9d5dcbc83622f73f1e7fe4fdf70bce9ae95a6adbe0964b94442033b8e2923327
   conditions: (os=darwin | os=linux | os=win32)
   languageName: node
   linkType: hard

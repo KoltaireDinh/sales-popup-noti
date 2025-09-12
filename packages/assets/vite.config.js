@@ -32,7 +32,7 @@ const [sslKey, sslCert] = ['ssl.key', 'ssl.crt'].map(file => {
 const isHttps = !!(sslKey && sslCert) && !process.env.DISABLE_HTTPS;
 
 console.log(['Template file', fePort, bePort, host].join(' == '));
-
+console.log(process.env);
 const isLocalProxy = localhost !== host;
 /** @type {HmrOptions} */
 const hmrConfig = {

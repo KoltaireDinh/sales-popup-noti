@@ -1,0 +1,16 @@
+mutation webhookSubscriptionCreate($topic: WebhookSubscriptionTopic!, $webhookSubscription: WebhookSubscriptionInput!) {
+  webhookSubscriptionCreate(topic: $topic, webhookSubscription: $webhookSubscription) {
+    webhookSubscription {
+      id
+      callbackUrl
+      createdAt
+      updatedAt
+      format
+      legacyResourceId
+    }
+    userErrors {
+      field
+      message
+    }
+  }
+}

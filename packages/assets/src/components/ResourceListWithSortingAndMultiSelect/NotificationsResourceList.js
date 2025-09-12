@@ -67,7 +67,7 @@ function NotificationsResourceList() {
               onNext: nextPage,
               onPrevious: prevPage,
               hasNext: !!pageInfo?.hasNext,
-              hasPrevious: !!pageInfo?.hasPre,
+              hasPrevious: !!pageInfo?.hasPre
             }}
           />
         </Card>

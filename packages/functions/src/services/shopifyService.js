@@ -4,45 +4,12 @@ import Shopify from 'shopify-api-node';
 import * as notificationRepository from '../repositories/notificationRepository';
 import * as settingRepository from '../repositories/settingRepository';
 import defaultSettings from '../const/defaultSettings';
-import fs from 'fs';
-import path from 'path';
-
-export const API_VERSION = '2024-04';
-
+import {graphqlRequest, loadGraphQL} from '../helpers/graphql/graphqlHelpers';
+import {API_VERSION} from '@avada/core/build/constants';
+import appConfig from '../config/app';
+import {isEmpty} from '@avada/utils';
 /**
- * loadGQL
- * @param file
- * @returns {string}
- */
-function loadGraphQL(file) {
-  return fs.readFileSync(path.join(__dirname, '..', 'graphql', file), 'utf8');
-}
-
-/**
- *
- * @param shopDomain
- * @param accessToken
- * @param query
- * @param variables
- * @returns {Promise<*>}
- */
-async function graphqlRequest({shopDomain, accessToken, query, variables = {}}) {
-  const URL = `https://${shopDomain}/admin/api/${API_VERSION}/graphql.json`;
-  const res = await fetch(URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': accessToken
-    },
-    body: JSON.stringify({query, variables})
-  });
-  const json = await res.json();
-  if (json.errors) throw new Error(JSON.stringify(json.errors));
-  return json.data;
-}
-
-/**
- *
+ *  Sync orders to notifications
  * @param shopDomain
  * @param accessToken
  * @param limit
@@ -51,6 +18,7 @@ async function graphqlRequest({shopDomain, accessToken, query, variables = {}}) 
 export async function syncOrdersWithGraphQL({shopDomain, accessToken}, limit = 30) {
   try {
     console.log('Starting sync for shop:', shopDomain);
+
     console.log('Access token exists:', !!accessToken);
 
     const orderQuery = loadGraphQL('orders.graphql');
@@ -63,166 +31,154 @@ export async function syncOrdersWithGraphQL({shopDomain, accessToken}, limit = 3
 
     const data = await graphqlRequest({
       shopDomain,
+
       accessToken,
+
       query: orderQuery,
+
       variables
     });
 
     console.log('Orders fetched from GraphQL:', {
       hasOrders: !!data?.orders,
+
       orderCount: data?.orders?.edges?.length || 0
     });
 
     const ordersList = data.orders.edges;
+
     const notifications = [];
 
     for (let i = 0; i < ordersList.length; i++) {
       const order = ordersList[i];
+
       const node = order.node;
+
       const customer = node.customer;
+
       const lineItem = node.lineItems?.edges?.[0]?.node;
+
       const productImage = lineItem?.product?.images?.edges?.[0]?.node?.url;
 
       const notification = {
         shopDomain: shopDomain,
+
         firstName: customer?.firstName || 'Anonymous',
+
         city: customer?.defaultAddress?.city || 'Unknown',
+
         country: customer?.defaultAddress?.country || 'Unknown',
+
         productId: lineItem?.product?.id || node.id,
+
         productImage: productImage || '',
+
         productName: lineItem?.title || 'Unknown Product',
-        createdAt: new Date(node.createdAt)
+
+        timestamp: new Date(node.createdAt)
       };
 
       notifications.push(notification);
     }
+
     await notificationRepository.create(notifications);
+
     console.log(`Synced ${notifications.length} notifications for ${shopDomain}`);
   } catch (err) {
     console.error('Error syncing orders with GraphQL:', {
       message: err.message,
+
       stack: err.stack,
+
       shopDomain
     });
+
     throw err;
   }
 }
 
-// Simplified version without external dependencies (alternative)
-/* export async function syncOrdersSimple(shopDomain, accessToken, limit = 30) {
+/*
+/**
+ * Register webhook for order creation using GraphQL
+ * @param {string} shopDomain
+ * @param {string} accessToken
+ * @returns {Promise<void>}
+
+export async function registerOrderWebhookGraphQL({shopDomain, accessToken}) {
   try {
-    console.log('🔄 Simple sync starting for:', shopDomain);
+    console.log('Registering order webhook for shop:', shopDomain);
 
-    const query = `
-      query Orders($first: Int!) {
-        orders(first: $first, reverse: true, sortKey: CREATED_AT) {
-          edges {
-            node {
-              id
-              createdAt
-              customer {
-                firstName
-                defaultAddress {
-                  city
-                  country
-                }
-              }
-              lineItems(first: 1) {
-                edges {
-                  node {
-                    name
-                    product {
-                      id
-                      images(first: 1) {
-                        edges {
-                          node {
-                            url
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+    const webhookQuery = loadGraphQL('webhook.graphql');
+
+    const variables = {
+      topic: 'ORDERS_CREATE',
+      webhookSubscription: {
+        callbackUrl: `https://${appConfig.baseUrl}/api/webhooks/orders/create`,
+        format: 'JSON'
       }
-    `;
+    };
 
-    const response = await fetch(`https://${shopDomain}/admin/api/${API_VERSION}/graphql.json`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Access-Token': accessToken
-      },
-      body: JSON.stringify({
-        query: query,
-        variables: {first: limit}
-      })
+    console.log('Creating webhook with URL:', variables.webhookSubscription.callbackUrl);
+
+    const data = await graphqlRequest({
+      shopDomain,
+      accessToken,
+      query: webhookQuery,
+      variables
     });
 
-    const result = await response.json();
-
-    if (result.errors) {
-      throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
-    }
-
-    console.log('📊 Simple sync response:', {
-      hasData: !!result.data,
-      hasOrders: !!result.data?.orders,
-      orderCount: result.data?.orders?.edges?.length || 0
-    });
-
-    if (!result.data?.orders?.edges?.length) {
-      console.log('⚠️ No orders found, creating test notification');
-
-      const testId = await notificationRepository.createOne({
-        shopDomain: shopDomain,
-        firstName: 'Test Customer',
-        city: 'Test City',
-        country: 'Test Country',
-        productId: 'test-simple-' + Date.now(),
-        productImage:
-          'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png',
-        productName: 'Test Product (Simple Sync)',
-        createdAt: new Date()
+    if (data?.webhookSubscription) {
+      console.log('Webhook registered successfully:', {
+        id: data.webhookSubscription.id,
+        callbackUrl: data.webhookSubscription.callbackUrl,
+        format: data.webhookSubscription.format
       });
-      console.log('✅ Test notification created:', testId);
-      return;
+      return data.webhookSubscription;
     }
-
-    const orders = result.data.orders.edges;
-    const notifications = orders.map(orderEdge => {
-      const order = orderEdge.node;
-      const customer = order.customer;
-      const lineItem = order.lineItems?.edges?.[0]?.node;
-      const productImage = lineItem?.product?.images?.edges?.[0]?.node?.url;
-
-      return {
-        shopDomain: shopDomain,
-        firstName: customer?.firstName || 'Anonymous',
-        city: customer?.defaultAddress?.city || 'Unknown',
-        country: customer?.defaultAddress?.country || 'Unknown',
-        productId: lineItem?.product?.id || order.id,
-        productImage: productImage || '',
-        productName: lineItem?.name || 'Unknown Product',
-        createdAt: new Date(order.createdAt)
-      };
-    });
-
-    console.log(`💾 Creating ${notifications.length} notifications...`);
-    await notificationRepository.create(notifications);
-    console.log(`✅ Simple sync created ${notifications.length} notifications`);
   } catch (error) {
-    console.error('❌ Simple sync error:', error.message);
+    console.error('Error registering order webhook:', error);
     throw error;
   }
-}*/
+}
+ */
 
-export const createDefaultSettings = async ({shopId, shopDomain}) => {
+export async function registerWebhook(shopify) {
   try {
-    console.log('⚙️ Creating default settings for shop:', shopId);
+    const activeWebhooks = await shopify.webhook.list();
+    const outdatedWebhooks = activeWebhooks.filter(
+      webhook => !webhook.address.includes(appConfig.baseUrl)
+    );
+    if (!isEmpty(outdatedWebhooks)) {
+      await Promise.all(
+        outdatedWebhooks.map(webhook => {
+          shopify.webhook.delete(webhook.id);
+        })
+      );
+    }
+    const address = `https://{appConfig.baseUrl}/api/webhook/orders/create`;
+    const webhooks = await shopify.webhook.list({address});
+    console.log(webhooks);
+    if (webhooks.length > 0) {
+      console.log('Webhook already exists');
+      return webhooks[0];
+    } else {
+      const webhookPayload = {
+        topic: 'orders/create',
+        address: address,
+        format: 'json'
+      };
+      console.log('Webhook registered successfully');
+      return shopify.webhook.create(webhookPayload);
+    }
+  } catch (error) {
+    console.error('Error registering webhook', error);
+    throw error;
+  }
+}
+
+export async function createDefaultSettings({shopId, shopDomain}) {
+  try {
+    console.log('Creating default settings for shop:', shopId);
     const defaultData = await settingRepository.createOne({
       data: defaultSettings,
       shopId: shopId,
@@ -236,12 +192,17 @@ export const createDefaultSettings = async ({shopId, shopDomain}) => {
     console.error('Error creating default settings:', error);
     throw error;
   }
-};
+}
 
+/**
+ * Initialize Shopify instance
+ * @param shopData
+ * @param apiVersion
+ * @returns {Shopify}
+ */
 export function initShopify(shopData, apiVersion = API_VERSION) {
   const shopParsedData = prepareShopData(shopData.id, shopData, shopifyConfig.accessTokenKey);
   const {shopifyDomain, accessToken} = shopParsedData;
-
   return new Shopify({
     shopName: shopifyDomain,
     accessToken,

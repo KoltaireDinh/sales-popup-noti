@@ -1,5 +1,5 @@
 (function() {
-  const BASE_URL = 'https://whether-quite-vt-responsibilities.trycloudflare.com/scripttag';
+  const BASE_URL = 'https://em-larry-measured-indiana.trycloudflare.com/scripttag';
 
   const scriptElement = document.createElement('script');
   scriptElement.type = 'text/javascript';

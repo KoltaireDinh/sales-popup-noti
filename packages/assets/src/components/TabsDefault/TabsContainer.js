@@ -5,8 +5,6 @@ import {Button, Card, InlineStack, Layout, Tabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
-import * as Icon from '@shopify/polaris-icons';
-
 
 function TabsContainer({fetchData}) {
   const [selected, setSelected] = useState(0);
@@ -53,9 +51,9 @@ function TabsContainer({fetchData}) {
   };
   return (
     <Layout>
-      <div style={{marginTop: '1rem', marginLeft: '1rem'}}>
+      <Layout.Section variant={'oneThird'}>
         <NotificationPopup settings={settings} />
-      </div>
+      </Layout.Section>
 
       <Layout.Section>
         <Card>

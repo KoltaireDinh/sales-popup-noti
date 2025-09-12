@@ -1,24 +1,51 @@
-import {getShopByShopifyDomain} from '@avada/core';
-import Shopify from 'shopify-api-node';
+import * as notificationRepository from '../repositories/notificationRepository';
+import {formatNotification} from '@functions/helpers/formatNotification';
 
-export async function listenNewOrder(ctx) {
+/**
+ * listen new orders
+ * @param ctx
+ * @returns {Promise<void>}
+ */
+export async function listenNewOrders(ctx) {
   try {
-    const shopifyDomain = ctx.get('X-Shopify-Shop-Domain');
-    const orderData = ctx.req.body;
-    const shop = await getShopByShopifyDomain(shopifyDomain);
-    const shopify = new Shopify({
-      shopName: shopifyDomain,
-      accessToken: shop.accessToken
+    const shopDomain = ctx.get('X-Shopify-Shop-Domain');
+    const orderData = ctx.request.body;
+
+    if (!orderData || !orderData.line_items || orderData.line_items.length === 0) {
+      ctx.status = 200;
+      ctx.body = {success: true, message: 'No line items to process'};
+      return;
+    }
+
+    const formattedOrder = {
+      customer: orderData.customer,
+      lineItems: {
+        edges: orderData.line_items.map(item => ({node: item}))
+      },
+      createdAt: orderData.created_at
+    };
+
+    const shop = {
+      domain: shopDomain
+    };
+
+    const notification = formatNotification(shop, formattedOrder);
+
+    console.log('Creating notification:', {
+      shopDomain: notification.shopDomain,
+      productName: notification.productName,
+      customerName: notification.firstName,
+      location: `${notification.city}, ${notification.country}`
     });
-    const notification = await getNotificationItem(shopify, orderData);
-    await addNotification({shopId: shop.id, shopifyDomain, data: notification});
-    return (ctx.body = {
-      success: true
-    });
+
+    await notificationRepository.createOne(notification);
+
+    console.log('Successfully processed order webhook and created notification');
+    ctx.status = 200;
+    ctx.body = {success: true, message: 'Order notification created'};
   } catch (error) {
-    console.error(error);
-    return (ctx.body = {
-      success: false
-    });
+    console.error('Error processing order webhook:');
+    ctx.status = 500;
+    ctx.body = {error: 'Internal server error'};
   }
 }

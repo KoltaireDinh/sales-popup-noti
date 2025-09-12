@@ -1,6 +1,7 @@
 import {getCurrentShop, getCurrentShopData} from '@functions/helpers/auth';
 
 import * as notificationRepository from '@functions/repositories/notificationRepository';
+
 /**
  *
  * @param ctx

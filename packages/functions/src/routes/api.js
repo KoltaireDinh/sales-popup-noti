@@ -4,6 +4,7 @@ import * as subscriptionController from '@functions/controllers/subscriptionCont
 import {getApiPrefix} from '@functions/const/app';
 import * as settingController from '@functions/controllers/settingController';
 import * as notificationController from '@functions/controllers/notificationController';
+// import * as webhookController from '@functions/controllers/webhookController';
 
 export default function apiRouter(isEmbed = false) {
   const router = new Router({prefix: getApiPrefix(isEmbed)});
@@ -14,5 +15,6 @@ export default function apiRouter(isEmbed = false) {
   router.post('/notifications', notificationController.createNotifications);
   router.get('/settings', settingController.get);
   router.put('/settings', settingController.update);
+  // router.post('/webhooks/order/new', webhookController.listenNewOrders);
   return router;
 }
