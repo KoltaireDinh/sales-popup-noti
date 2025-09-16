@@ -10,10 +10,10 @@ import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 import {
   createDefaultSettings,
+  initShopify,
   registerWebhook,
   syncOrdersWithGraphQL
 } from '@functions/services/shopifyService';
-import Shopify from 'shopify-api-node';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -58,68 +58,25 @@ app.use(
       });
     },
     optionalScopes: shopifyOptionalScopes,
-    // Handle post-installation tasks (sync 30 orders, setup shop data, register webhooks, create default settings)
+
+    afterLogin: async ctx => {
+      try {
+        const shopDomain = ctx.state.shopifyDomain;
+        const shop = await getShopByShopifyDomain(shopDomain);
+        const shopify = initShopify(shop);
+        await registerWebhook(shopify);
+      } catch (error) {
+        console.error('after Login error:', error);
+      }
+    },
+    // Sync 30 orders, setup shop data, register webhooks, create default settings
     afterInstall: async ctx => {
       try {
-        const shopifyDomain = ctx.state.shopify && ctx.state.shopify.shop;
-        const accessToken = ctx.state.shopify && ctx.state.shopify.accessToken;
-        if (!shopifyDomain || !accessToken) {
-          ctx.status = 422;
-          ctx.body = {
-            success: false,
-            message: 'Missing shopifyDomain or accessToken',
-            shopifyDomain,
-            accessToken
-          };
-          console.error('afterInstall ERROR - Missing credentials', {shopifyDomain, accessToken});
-          return;
-        }
-        const shopify = new Shopify({
-          shopName: shopifyDomain,
-          accessToken: accessToken
-        });
-        console.log('After Install Triggered:', {shopifyDomain, accessToken});
-
-        const shopData = await getShopByShopifyDomain(shopifyDomain, accessToken);
-        if (!shopData || !shopData.id) {
-          ctx.status = 422;
-          ctx.body = {
-            success: false,
-            message: 'Shop not found or missing shopData.id',
-            shopifyDomain,
-            shopData
-          };
-          console.error('afterInstall ERROR - Shop data problem', {shopifyDomain, shopData});
-          return;
-        }
-        console.log('Fetched shop data:', shopData);
-
-        await Promise.all([
-          // Sync existing orders to populate initial notifications
-          syncOrdersWithGraphQL({
-            shopDomain: shopifyDomain,
-            accessToken: accessToken
-          }),
-          // Create default settings for the shop
-          createDefaultSettings({shopId: shopData.id, shopDomain: shopifyDomain}),
-          // Register webhook to listen for new orders
-          registerWebhook(shopify)
-          /*  registerOrderWebhookGraphQL({
-            shopDomain: shopifyDomain,
-            accessToken: accessToken,
-            baseUrl: appConfig.baseUrl
-          })*/
-        ]);
-
-        console.log('Successfully completed all post-installation tasks for:', shopifyDomain);
+        const shopDomain = ctx.state.shopify.shop;
+        const shop = await getShopByShopifyDomain(shopDomain);
+        const shopify = initShopify(shop);
+        await Promise.all([syncOrdersWithGraphQL(shopify, shop), createDefaultSettings(shop)]);
       } catch (err) {
-        ctx.status = 422;
-        ctx.body = {
-          success: false,
-          message: 'afterInstall ERROR',
-          error: (err && err.message) || err,
-          stack: err && err.stack
-        };
         console.error('afterInstall ERROR', err);
       }
     }

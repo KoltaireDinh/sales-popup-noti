@@ -26,7 +26,9 @@ export async function getOne(id) {
  * @returns {Promise<WriteResult>} Firestore write result
  */
 export async function updateOne(shopData, data) {
-  return collection.doc(shopData.id).set({...data, updatedAt: new Date()}, {merge: true});
+  return collection
+    .doc(shopData.id)
+    .set({...data, domain: shopData.domain, updatedAt: new Date()}, {merge: true});
 }
 
 /**

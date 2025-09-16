@@ -1,5 +1,5 @@
 import * as notificationRepository from '../repositories/notificationRepository';
-import {formatNotification} from '@functions/helpers/formatNotification';
+import {formatNotifications} from '@functions/helpers/formatNotifications';
 
 /**
  * listen new orders
@@ -29,23 +29,21 @@ export async function listenNewOrders(ctx) {
       domain: shopDomain
     };
 
-    const notification = formatNotification(shop, formattedOrder);
+    const notification = formatNotifications(shop, formattedOrder);
 
     console.log('Creating notification:', {
       shopDomain: notification.shopDomain,
       productName: notification.productName,
       customerName: notification.firstName,
-      location: `${notification.city}, ${notification.country}`
+      address: `${notification.city}, ${notification.country}`,
+      image: notification.productImage
     });
 
     await notificationRepository.createOne(notification);
 
     console.log('Successfully processed order webhook and created notification');
-    ctx.status = 200;
     ctx.body = {success: true, message: 'Order notification created'};
   } catch (error) {
     console.error('Error processing order webhook:');
-    ctx.status = 500;
-    ctx.body = {error: 'Internal server error'};
   }
 }

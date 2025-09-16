@@ -1,5 +1,4 @@
 import {readFileSync} from 'fs';
-import {API_VERSION} from '@avada/core/build/constants';
 
 /**
  * load graphql
@@ -18,6 +17,8 @@ export function loadGraphQL(path) {
  * @param variables
  * @returns {Promise<*>}
  */
+
+/*
 export async function graphqlRequest({shopDomain, accessToken, query, variables = {}}) {
   const URL = `https://${shopDomain}/admin/api/${API_VERSION}/graphql.json`;
   const res = await fetch(URL, {
@@ -33,3 +34,6 @@ export async function graphqlRequest({shopDomain, accessToken, query, variables 
   if (json.errors) throw new Error(JSON.stringify(json.errors));
   return json.data;
 }
+
+
+ */
