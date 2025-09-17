@@ -1,4 +1,4 @@
-import {getCurrentShop, getCurrentShopData} from '@functions/helpers/auth';
+import {getCurrentShop} from '@functions/helpers/auth';
 
 import * as notificationRepository from '@functions/repositories/notificationRepository';
 
@@ -9,17 +9,17 @@ import * as notificationRepository from '@functions/repositories/notificationRep
  */
 export async function getNotifications(ctx) {
   try {
-    const shopData = getCurrentShopData(ctx);
+    const shopId = getCurrentShop(ctx);
     const {limit, after, before, hasCount} = ctx.query;
     const data = await notificationRepository.get({
-      shopDomain: shopData.shopifyDomain,
+      shopId,
       after,
       before,
       limit: limit,
       hasCount: hasCount === 'true'
     });
     console.log('Fetched notifications', data);
-    ctx.body = {...data, shopData: {}, success: true};
+    ctx.body = {...data, shopId, success: true};
   } catch (e) {
     console.error(e);
     ctx.body = {data: [], shopData: {}, success: false};

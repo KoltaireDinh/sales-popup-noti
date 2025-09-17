@@ -19,6 +19,19 @@ export async function getOne(id) {
   const doc = await collection.doc(id).get();
   return {shopId: id, ...formatDateFields(doc.data())};
 }
+
+/**
+ * get settings by domains
+ * @param shopDomain
+ * @returns {Promise<any>}
+ */
+export async function getOneByDomain(shopDomain) {
+  const doc = await collection
+    .where('domain', '==', shopDomain)
+    .limit(1)
+    .get();
+  return {shopDomain: shopDomain, ...formatDateFields(doc.docs[0].data())};
+}
 /**
  * Updates a settings document with new data and automatically sets updatedAt timestamp
  * @param {Object} shopData - The shop data object

@@ -10,10 +10,10 @@ import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 import {
   createDefaultSettings,
-  initShopify,
   registerWebhook,
   syncOrdersWithGraphQL
 } from '@functions/services/shopifyService';
+import Shopify from 'shopify-api-node';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -58,24 +58,21 @@ app.use(
       });
     },
     optionalScopes: shopifyOptionalScopes,
-
-    afterLogin: async ctx => {
-      try {
-        const shopDomain = ctx.state.shopifyDomain;
-        const shop = await getShopByShopifyDomain(shopDomain);
-        const shopify = initShopify(shop);
-        await registerWebhook(shopify);
-      } catch (error) {
-        console.error('after Login error:', error);
-      }
-    },
-    // Sync 30 orders, setup shop data, register webhooks, create default settings
+    // Sync 30 orders, register webhooks, create default settings
     afterInstall: async ctx => {
       try {
         const shopDomain = ctx.state.shopify.shop;
+        const accessToken = ctx.state.shopify.accessToken;
         const shop = await getShopByShopifyDomain(shopDomain);
-        const shopify = initShopify(shop);
-        await Promise.all([syncOrdersWithGraphQL(shopify, shop), createDefaultSettings(shop)]);
+        const shopify = new Shopify({
+          shopName: shopDomain,
+          accessToken: accessToken
+        });
+        await Promise.all([
+          syncOrdersWithGraphQL(shopify, shop),
+          createDefaultSettings(shop),
+          registerWebhook(shopify)
+        ]);
       } catch (err) {
         console.error('afterInstall ERROR', err);
       }

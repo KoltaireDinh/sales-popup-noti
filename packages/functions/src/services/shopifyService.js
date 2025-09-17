@@ -55,29 +55,30 @@ export async function syncOrdersWithGraphQL(shopify, shop) {
  */
 export async function registerWebhook(shopify) {
   // NOTE: Get current active hooks
-  const activeWebhooks = await shopify.webhook.list();
+  const currentWebhooks = await shopify.webhook.list();
   // NOTE: Filter webhooks that does not include the webhook with defined baseUrl
-  const outdatedWebhooks = activeWebhooks.filter(
+  const unusedWebhooks = currentWebhooks.filter(
     webhook => !webhook.address.includes(appConfig.baseUrl)
   );
-  if (!isEmpty(outdatedWebhooks)) {
+  if (!isEmpty(unusedWebhooks)) {
     await Promise.all(
-      outdatedWebhooks.map(webhook => {
+      unusedWebhooks.map(webhook => {
         shopify.webhook.delete(webhook.id);
       })
     );
   }
   const webhooks = await shopify.webhook.list({
-    address: `https://{appConfig.baseUrl}/api/webhook/orders/new`
+    address: `https://${appConfig.baseUrl}/webhook/orders/new`
   });
   console.log(webhooks);
   if (webhooks.length === 0) {
     return shopify.webhook.create({
       topic: 'orders/create',
-      address: `https://{appConfig.baseUrl}/api/webhook/orders/new`,
+      address: `https://${appConfig.baseUrl}/webhook/orders/new`,
       format: 'json'
     });
   }
+  console.log('Webhook created successfully');
 }
 // REVIEW
 /**
@@ -86,13 +87,9 @@ export async function registerWebhook(shopify) {
  * @param shop
  */
 export async function createDefaultSettings(shop) {
-  try {
-    const defaultData = await settingRepository.getOne(defaultSettings, shop);
-    if (defaultData) {
-      console.log('Created default settings');
-      return defaultData;
-    }
-  } catch (error) {
-    console.error('Error creating default settings');
-  }
+  await settingRepository.createOne({
+    data: defaultSettings,
+    shopDomain: shop.domain
+  });
+  console.log(`Created default setting for shop ${shop.name}`);
 }

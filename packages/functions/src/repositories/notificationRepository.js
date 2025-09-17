@@ -39,7 +39,7 @@ export async function create(dataList) {
 /**
  * Retrieves notifications with pagination support
  * @param {Object} params - Query parameters
- * @param {string} params.shopDomain - The shop ID to filter notifications by
+ * @param {string} params.shopId - The shop ID to filter notifications by
  * @param {string} [params.after] - Cursor for pagination (document ID to start after)
  * @param {string} [params.before] - Cursor for pagination (document ID to start before)
  * @param {number} [params.limit] - Maximum number of documents to return
@@ -47,10 +47,10 @@ export async function create(dataList) {
  * @param {boolean} [params.hasCount] - Whether to include total count in response
  * @returns {Promise<Object>} Paginated notification results
  */
-export async function get({shopDomain, after, before, limit = 10, withDocs, hasCount}) {
+export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
   try {
     let queriedRef = collection;
-    queriedRef = queriedRef.where('shopDomain', '==', shopDomain);
+    queriedRef = queriedRef.where('shopId', '==', shopId);
     queriedRef = queriedRef.orderBy('createdAt', 'asc');
     const [result] = await Promise.all([
       paginateQuery({

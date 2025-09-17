@@ -4,22 +4,22 @@
  * @param order
  * @returns {{shopId, shopDomain, firstName: *, city: *, country: *, productName, productId, productImage: *, createdAt: Date}}
  */
-export const formatNotifications = (shop, order) => {
-  const customer = order.customer;
-  const lineItem = order.lineItems?.edges?.[0]?.node;
-
+export function formatNotifications(shop, order) {
+  const customer = order?.customer;
+  const lineItem = order?.lineItems?.edges?.[0]?.node;
+  const createdAt = order?.createdAt;
   return {
     shopId: shop?.id,
-    shopDomain: shop?.domain,
+    shopDomain: shop?.shopifyDomain || 'Unknown',
     firstName: customer?.firstName || 'Anonymous',
     city: customer?.defaultAddress?.city || 'Unknown City',
     country: customer?.defaultAddress?.country || 'Unknown Country',
     productName: lineItem?.title || 'Unknown Product',
-    productId: lineItem?.product?.id,
+    productId: lineItem?.product?.id || 'Unknown Product',
     productImage: lineItem?.product?.images?.edges?.[0]?.node?.url || 'Unknown Image',
-    createdAt: new Date(order?.createdAt)
+    createdAt: createdAt && !isNaN(new Date(createdAt)) ? new Date(createdAt) : new Date()
   };
-};
+}
 
 /*
     const order = ordersList[i];

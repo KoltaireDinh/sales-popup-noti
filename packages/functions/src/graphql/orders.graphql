@@ -16,6 +16,7 @@ query ($first: Int!) {
             node {
               title
               product {
+                id
                 images(first: 1) {
                   edges {
                     node {

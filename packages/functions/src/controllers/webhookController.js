@@ -1,49 +1,34 @@
-import * as notificationRepository from '../repositories/notificationRepository';
+import * as notificationRepository from '@functions/repositories/notificationRepository';
 import {formatNotifications} from '@functions/helpers/formatNotifications';
+import {initShopify} from '@functions/services/shopifyService';
+import {loadGraphQL} from '@functions/helpers/graphql/graphqlHelpers';
+import {getShopByShopifyDomain} from '@avada/core';
+import {API_VERSION} from '@avada/core/build/constants';
 
 /**
- * listen new orders
- * @param ctx
- * @returns {Promise<void>}
+ * Handles new order webhook events from Shopify
+ * Creates a notification when a new order is placed
+ * @param {Object} ctx - Koa context object
+ * @returns {Promise<void>} Resolves when notification is created
  */
 export async function listenNewOrders(ctx) {
   try {
-    const shopDomain = ctx.get('X-Shopify-Shop-Domain');
-    const orderData = ctx.request.body;
+    console.log('Listen new orders function triggered :');
+    const order = ctx.req.body;
+    const shopDomain = ctx.request.header['x-shopify-shop-domain'];
+    const shop = await getShopByShopifyDomain(shopDomain);
+    const shopify = initShopify(shop, API_VERSION);
+    const query = loadGraphQL('notification.graphql');
 
-    if (!orderData || !orderData.line_items || orderData.line_items.length === 0) {
-      ctx.status = 200;
-      ctx.body = {success: true, message: 'No line items to process'};
-      return;
-    }
-
-    const formattedOrder = {
-      customer: orderData.customer,
-      lineItems: {
-        edges: orderData.line_items.map(item => ({node: item}))
-      },
-      createdAt: orderData.created_at
-    };
-
-    const shop = {
-      domain: shopDomain
-    };
-
-    const notification = formatNotifications(shop, formattedOrder);
-
-    console.log('Creating notification:', {
-      shopDomain: notification.shopDomain,
-      productName: notification.productName,
-      customerName: notification.firstName,
-      address: `${notification.city}, ${notification.country}`,
-      image: notification.productImage
+    const notificationGraphql = await shopify.graphql(query, {
+      orderId: order.admin_graphql_api_id
     });
+    const orderData = notificationGraphql?.node;
 
-    await notificationRepository.createOne(notification);
-
-    console.log('Successfully processed order webhook and created notification');
-    ctx.body = {success: true, message: 'Order notification created'};
-  } catch (error) {
-    console.error('Error processing order webhook:');
+    await notificationRepository.createOne(formatNotifications(shop, orderData));
+    ctx.body = {data: notificationGraphql, success: true};
+  } catch (e) {
+    console.error(e);
+    ctx.body = {data: [], success: false};
   }
 }

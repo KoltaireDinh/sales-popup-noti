@@ -1,0 +1,35 @@
+query Notification($orderId: ID!) {
+  node(id: $orderId) {
+    ... on Order {
+      createdAt
+      customer {
+        firstName
+        defaultAddress {
+          city
+          country
+        }
+      }
+      lineItems(first: 1) {
+        edges {
+          node {
+            title
+            product {
+              id
+              images(first: 1) {
+                edges {
+                  node {
+                    url
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  shop {
+    id
+    myshopifyDomain
+  }
+}
