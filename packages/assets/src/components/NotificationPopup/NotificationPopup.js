@@ -1,6 +1,5 @@
 import React from 'react';
 import './NoticationPopup.scss';
-import {formatDate} from '@assets/helpers/formatDate.js';
 
 const NotificationPopup = ({
                              settings = {},
@@ -31,14 +30,13 @@ const NotificationPopup = ({
                 {firstName} in {city}, {country}
               </div>
               <div className={'Avada-SP__Subtitle'}>purchased {displayProductName}</div>
-              {!settings.hideTimeAgo && (
                 <div className={'Avada-SP__Footer'}>
-                  {formatDate(timestamp)}
+                  {!settings.hideTimeAgo && timestamp}
                   <span className="uni-blue">
                     <i className="fa fa-check" aria-hidden="true" /> by Avada
                   </span>
                 </div>
-              )}
+
             </div>
           </a>
         </div>

@@ -93,3 +93,14 @@ export async function createDefaultSettings(shop) {
   });
   console.log(`Created default setting for shop ${shop.name}`);
 }
+
+export async function registerScripttags(shopify) {
+  try {
+    await shopify.scriptTag.create({
+      event: 'onload',
+      src: 'http://localhost:3000/scripttag/avada-sale-pop.min.js'
+    });
+  } catch (err) {
+    console.error('Error registering script-tag', err);
+  }
+}

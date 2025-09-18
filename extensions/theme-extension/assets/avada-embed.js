@@ -1,5 +1,5 @@
 (function() {
-  const BASE_URL = 'https://holes-spatial-consider-fda.trycloudflare.com/scripttag';
+  const BASE_URL = 'https://hotel-resolve-product-recent.trycloudflare.com/scripttag';
 
   const scriptElement = document.createElement('script');
   scriptElement.type = 'text/javascript';

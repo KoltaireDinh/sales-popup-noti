@@ -48,6 +48,7 @@ export async function create(dataList) {
  * @returns {Promise<Object>} Paginated notification results
  */
 export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
+  console.log('Getting notifications by shopId: ', shopId);
   try {
     let queriedRef = collection;
     queriedRef = queriedRef.where('shopId', '==', shopId);
@@ -61,6 +62,7 @@ export async function get({shopId, after, before, limit = 10, withDocs, hasCount
     ]);
     return result;
   } catch (error) {
+    console.log('Error getting notification by shopId');
     throw error;
   }
 }
@@ -71,11 +73,16 @@ export async function get({shopId, after, before, limit = 10, withDocs, hasCount
  * @returns {Promise<Array<Object>>} Array of notification documents for the domain
  */
 export async function getByDomain(shopDomain) {
-  const docs = await collection
-    .where('shopDomain', '==', shopDomain)
-    .orderBy('createdAt', 'desc')
-    .get();
-  return docs.docs.map(doc => ({
-    ...doc.data()
-  }));
+  try {
+    const docs = await collection
+      .where('shopDomain', '==', shopDomain)
+      .orderBy('createdAt', 'desc')
+      .get();
+    return docs.docs.map(doc => ({
+      ...doc.data()
+    }));
+  } catch (err) {
+    console.error('Error getting notification by shopDomain: ', shopDomain);
+    throw err;
+  }
 }

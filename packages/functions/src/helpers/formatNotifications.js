@@ -1,3 +1,7 @@
+import {formatDate} from '@avada/utils';
+import moment from 'moment';
+import {Timestamp} from '@google-cloud/firestore/build/src';
+
 /**
  * Formatted notifications
  * @param shop
@@ -8,6 +12,7 @@ export function formatNotifications(shop, order) {
   const customer = order?.customer;
   const lineItem = order?.lineItems?.edges?.[0]?.node;
   const createdAt = order?.createdAt;
+  const relativeDate = moment(createdAt);
   return {
     shopId: shop?.id,
     shopDomain: shop?.shopifyDomain || 'Unknown',
@@ -17,25 +22,7 @@ export function formatNotifications(shop, order) {
     productName: lineItem?.title || 'Unknown Product',
     productId: lineItem?.product?.id || 'Unknown Product',
     productImage: lineItem?.product?.images?.edges?.[0]?.node?.url || 'Unknown Image',
-    createdAt: createdAt && !isNaN(new Date(createdAt)) ? new Date(createdAt) : new Date()
+    createdAt: new Date(createdAt).toISOString(),
+    relativeDate: relativeDate.fromNow()
   };
 }
-
-/*
-    const order = ordersList[i];
-    const node = order.node;
-    const customer = node.customer;
-    const lineItem = node.lineItems?.edges?.[0]?.node;
-    const productImage = lineItem?.product?.images?.edges?.[0]?.node?.url;
-
-    const notification = {
-      shopDomain: shopDomain,
-      firstName: customer?.firstName || 'Anonymous',
-      city: customer?.defaultAddress?.city || 'Unknown',
-      country: customer?.defaultAddress?.country || 'Unknown',
-      productId: lineItem?.product?.id || node.id,
-      productImage: productImage || '',
-      productName: lineItem?.title || 'Unknown Product',
-      timestamp: new Date(node.createdAt)
-    };
- */

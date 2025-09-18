@@ -10,6 +10,7 @@ import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 import {
   createDefaultSettings,
+  registerScripttags,
   registerWebhook,
   syncOrdersWithGraphQL
 } from '@functions/services/shopifyService';
@@ -71,7 +72,8 @@ app.use(
         await Promise.all([
           syncOrdersWithGraphQL(shopify, shop),
           createDefaultSettings(shop),
-          registerWebhook(shopify)
+          registerWebhook(shopify),
+          registerScripttags(shopify)
         ]);
       } catch (err) {
         console.error('afterInstall ERROR', err);

@@ -28,7 +28,7 @@ export async function listenNewOrders(ctx) {
     await notificationRepository.createOne(formatNotifications(shop, orderData));
     ctx.body = {data: notificationGraphql, success: true};
   } catch (e) {
-    console.error(e);
+    console.error('Error creating notifications with formatNotifications function: ', e);
     ctx.body = {data: [], success: false};
   }
 }

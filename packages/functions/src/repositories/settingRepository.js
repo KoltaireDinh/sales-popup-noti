@@ -26,11 +26,21 @@ export async function getOne(id) {
  * @returns {Promise<any>}
  */
 export async function getOneByDomain(shopDomain) {
-  const doc = await collection
-    .where('domain', '==', shopDomain)
+  const docs = await collection
+    .where('shopDomain', '==', shopDomain)
     .limit(1)
     .get();
-  return {shopDomain: shopDomain, ...formatDateFields(doc.docs[0].data())};
+
+  // NOTE: no settings found for this domain
+  if (docs.empty) {
+    return null;
+  }
+  const doc = docs.docs[0];
+  return {
+    id: doc.id,
+    shopDomain,
+    ...formatDateFields(doc.data())
+  };
 }
 /**
  * Updates a settings document with new data and automatically sets updatedAt timestamp
@@ -41,9 +51,8 @@ export async function getOneByDomain(shopDomain) {
 export async function updateOne(shopData, data) {
   return collection
     .doc(shopData.id)
-    .set({...data, domain: shopData.domain, updatedAt: new Date()}, {merge: true});
+    .set({...data, shopDomain: shopData.shopifyDomain, updatedAt: new Date()}, {merge: true});
 }
-
 /**
  * create settings
  * @param data

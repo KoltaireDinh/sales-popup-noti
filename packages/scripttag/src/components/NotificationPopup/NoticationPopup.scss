@@ -1,10 +1,8 @@
 .Avava-SP__Wrapper {
-  width: 293px;
+  width: 535px;
+  position: relative;
   z-index: 99;
   color: #333;
-  position: fixed;
-  top: 15px;
-  left: 15px;
 }
 
 .Avava-SP__Wrapper .Avava-SP__LinkWrapper {
@@ -16,7 +14,7 @@
   }
 }
 .Avava-SP__Wrapper img {
-  max-width: 135px;
+  max-width: 535px;
   opacity: 0;
   visibility: hidden;
   position: absolute;

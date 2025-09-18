@@ -7,27 +7,24 @@ import * as settingRepository from '@functions/repositories/settingRepository';
  * @param {Object} ctx - Koa context object
  * @returns {Promise<void>} Resolves with notifications and settings data
  */
-export async function getNotifications(ctx) {
+export async function getClientNotifications(ctx) {
   try {
-    const {shop} = ctx.query;
+    const shopDomain = ctx.query.shopDomain;
+    console.log(shopDomain);
 
-    const [notifications, setting] = await Promise.all([
-      notificationRepository.getByDomain(shop),
-      settingRepository.getOneByDomain(shop)
+    const [notifications, settings] = await Promise.all([
+      notificationRepository.getByDomain(shopDomain),
+      settingRepository.getOneByDomain(shopDomain)
     ]);
-    const updatedNotifications = notifications.map(notification => {
-      return {
-        ...notification,
-      };
-    });
-    const data = {
-      settings: setting,
-      notifications: updatedNotifications
+    ctx.body = {
+      status: 'success',
+      data: {
+        notifications: notifications,
+        settings: settings
+      }
     };
-
-    ctx.body = {...data};
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error('Error getting client notifications', error);
     ctx.body = {data: [], shopDomain: '', success: false};
   }
 }
