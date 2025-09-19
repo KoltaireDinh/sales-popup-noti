@@ -71,6 +71,10 @@
         "function": "clientApi"
       },
       {
+        "source": "/scripttag/**",
+        "destination": "avada-sale-pop.min.html"
+      },
+      {
         "source": "/embed/**",
         "destination": "/embed.html"
       },

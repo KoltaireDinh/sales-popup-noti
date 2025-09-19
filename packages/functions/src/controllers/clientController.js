@@ -17,11 +17,8 @@ export async function getClientNotifications(ctx) {
       settingRepository.getOneByDomain(shopDomain)
     ]);
     ctx.body = {
-      status: 'success',
-      data: {
-        notifications: notifications,
-        settings: settings
-      }
+      notifications: notifications,
+      settings: settings
     };
   } catch (error) {
     console.error('Error getting client notifications', error);

@@ -1,5 +1,4 @@
 import makeRequest from '../helpers/api/makeRequest';
-
 export default class ApiManager {
   getNotifications = async () => {
     return this.getApiData();
@@ -7,10 +6,10 @@ export default class ApiManager {
 
   getApiData = async () => {
     const shopifyDomain = window.Shopify.shop;
+    console.log(shopifyDomain);
     const {notifications, settings} = await makeRequest(
-      `http://localhost:5000/clientApi/notifications?shopDomain=${shopifyDomain}`
+      `https://localhost:3001/clientApi/notifications?shopDomain=${shopifyDomain}`
     );
-
     return {notifications, settings};
   };
 }

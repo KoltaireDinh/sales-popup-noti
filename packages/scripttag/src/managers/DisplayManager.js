@@ -8,25 +8,50 @@ export default class DisplayManager {
     this.notifications = [];
     this.settings = {};
   }
+
   async initialize({notifications, settings}) {
     this.notifications = notifications;
     this.settings = settings;
     this.insertContainer();
 
-    // Your display logic here
-
-    // Sample display first one
-    await this.display({notification: notifications[0]});
+    await this.timeout(this.settings.firstDelay);
+    for (const notification of this.notifications) {
+      await this.displayOneNotification(notification);
+      console.log(notification);
+    }
   }
-
-  fadeOut() {
-    const container = document.querySelector('#Avada-SalePop');
-    container.innerHTML = '';
+  // Your display logic here
+  async displayOneNotification(notification) {
+    await this.display(notification);
+    await this.displayDur();
+    await this.fadeOut();
+    await this.timeout(this.settings.popsInterval);
   }
-
-  display({notification}) {
+  // convert seconds to milliseconds
+  async timeout(seconds) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+  }
+  // set popup's display duration with settings.displayDuration
+  async displayDur() {
+    await this.timeout(this.settings.displayDuration);
+  }
+  // hide popup after displayDuration time
+  async fadeOut() {
     const container = document.querySelector('#Avada-SalePop');
-    render(<NotificationPopup {...notification} />, container);
+    if (container) {
+      render(null, container);
+    }
+  }
+  // create notification element with configured settings values
+  async display(notification) {
+    const container = document.querySelector('#Avada-SalePop');
+    if (container) {
+      const notificationPopup = React.createElement(NotificationPopup, {
+        ...notification,
+        settings: this.settings
+      });
+      render(notificationPopup, container);
+    }
   }
 
   insertContainer() {

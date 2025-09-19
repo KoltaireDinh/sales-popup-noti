@@ -36,6 +36,7 @@ export async function getOneByDomain(shopDomain) {
     return null;
   }
   const doc = docs.docs[0];
+  console.log(doc.data());
   return {
     id: doc.id,
     shopDomain,
@@ -49,9 +50,13 @@ export async function getOneByDomain(shopDomain) {
  * @returns {Promise<WriteResult>} Firestore write result
  */
 export async function updateOne(shopData, data) {
+  console.log(shopData);
   return collection
     .doc(shopData.id)
-    .set({...data, shopDomain: shopData.shopifyDomain, updatedAt: new Date()}, {merge: true});
+    .set(
+      {...data, shopDomain: shopData.shopifyDomain, shopId: shopData.id, updatedAt: new Date()},
+      {merge: true}
+    );
 }
 /**
  * create settings
@@ -59,9 +64,10 @@ export async function updateOne(shopData, data) {
  * @param shopId
  * @returns {Promise<string>}
  */
-export async function createOne({data, shopId}) {
+export async function createOne({data, shopData}) {
   try {
-    const settingsDocRef = await collection.add({...data, shopId: shopId});
+    const settingsDocRef = await collection.add({...data, shopId: shopData.id});
+    console.log(settingsDocRef.id);
     console.log('Settings Document created with Id', settingsDocRef.id);
     return settingsDocRef.id;
   } catch (error) {
