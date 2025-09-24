@@ -11,6 +11,10 @@ export async function getClientNotifications(ctx) {
   try {
     const shopDomain = ctx.query.shopDomain;
     console.log(shopDomain);
+    if (!shopDomain) {
+     // return ctx.body = {data: [], shopDomain: '', success: false};
+      throw new Error('shopDomain not found');
+    }
 
     const [notifications, settings] = await Promise.all([
       notificationRepository.getByDomain(shopDomain),

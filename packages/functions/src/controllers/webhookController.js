@@ -1,5 +1,6 @@
 import * as notificationRepository from '@functions/repositories/notificationRepository';
-import {formatNotifications} from '@functions/helpers/formatNotifications';
+
+import {formatNotification} from '@functions/helpers/formatNotifications';
 import {initShopify} from '@functions/services/shopifyService';
 import {loadGraphQL} from '@functions/helpers/graphql/graphqlHelpers';
 import {getShopByShopifyDomain} from '@avada/core';
@@ -25,8 +26,9 @@ export async function listenNewOrders(ctx) {
     });
     const orderData = notificationGraphql?.node;
 
-    await notificationRepository.createOne(formatNotifications(shop, orderData));
-    ctx.body = {data: notificationGraphql, success: true};
+    await notificationRepository.createOne(formatNotification(shop, orderData));
+    ctx.status = 200;
+    ctx.body = {success: true};
   } catch (e) {
     console.error('Error creating notifications with formatNotifications function: ', e);
     ctx.body = {data: [], success: false};

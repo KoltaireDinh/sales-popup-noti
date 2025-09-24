@@ -17,6 +17,10 @@ const collection = firestore.collection('settings');
  */
 export async function getOne(id) {
   const doc = await collection.doc(id).get();
+  console.log(doc.data());
+  if (!doc.exists) {
+    return null;
+  }
   return {shopId: id, ...formatDateFields(doc.data())};
 }
 
@@ -26,22 +30,32 @@ export async function getOne(id) {
  * @returns {Promise<any>}
  */
 export async function getOneByDomain(shopDomain) {
-  const docs = await collection
-    .where('shopDomain', '==', shopDomain)
-    .limit(1)
-    .get();
+  try {
+    const docs = await collection
+      .where('shopDomain', '==', shopDomain)
+      .limit(1)
+      .get();
 
-  // NOTE: no settings found for this domain
-  if (docs.empty) {
-    return null;
+    if (docs.empty) {
+      console.log(`No settings found for domain: ${shopDomain}`);
+      return null;
+    }
+
+    const doc = docs.docs[0];
+    const data = doc.data();
+
+    console.log(`Settings found for domain: ${shopDomain}`);
+
+    return {
+      id: doc.id,
+      shopDomain,
+      ...formatDateFields(data),
+    };
+
+  } catch (error) {
+    console.error(`Error fetching settings for domain ${shopDomain}:`, error);
+    throw error;
   }
-  const doc = docs.docs[0];
-  console.log(doc.data());
-  return {
-    id: doc.id,
-    shopDomain,
-    ...formatDateFields(doc.data())
-  };
 }
 /**
  * Updates a settings document with new data and automatically sets updatedAt timestamp
@@ -66,11 +80,19 @@ export async function updateOne(shopData, data) {
  */
 export async function createOne({data, shopData}) {
   try {
-    const settingsDocRef = await collection.add({...data, shopId: shopData.id});
-    console.log(settingsDocRef.id);
-    console.log('Settings Document created with Id', settingsDocRef.id);
-    return settingsDocRef.id;
+    const docRef = collection.doc(shopData.id);
+    const settingsData = {
+      ...data,
+      shopId: shopData.id,
+      shopDomain: shopData.shopDomain,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    await docRef.set(settingsData);
+    console.log(`Created settings with shop: ${shopData.id}`);
+    return {id: shopData.id, ...settingsData};
   } catch (error) {
-    console.error('Error when creating settings', error);
+    console.error('Error when creating settings:', error);
   }
 }

@@ -11,8 +11,7 @@ import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
 import {
   createDefaultSettings,
   registerScripttags,
-  registerWebhook,
-  syncOrdersWithGraphQL
+  registerWebhook, syncOrders,
 } from '@functions/services/shopifyService';
 import Shopify from 'shopify-api-node';
 
@@ -70,7 +69,7 @@ app.use(
           accessToken: accessToken
         });
         await Promise.all([
-          syncOrdersWithGraphQL(shopify, shop),
+          syncOrders(shopify, shop),
           createDefaultSettings(shop),
           registerWebhook(shopify),
           registerScripttags(shopify)

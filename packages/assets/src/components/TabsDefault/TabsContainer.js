@@ -1,36 +1,20 @@
 import React, {useCallback, useState} from 'react';
-import useEditApi from '@assets/hooks/api/useEditApi.js';
 import defaultSettings from '@functions/const/defaultSettings.js';
-import {Button, Card, InlineStack, Layout, Tabs} from '@shopify/polaris';
+import {Card, InlineStack, Layout, Tabs} from '@shopify/polaris';
 import DisplaySettingsTab from '@assets/components/DisplaySettingsTab/DisplaySettingsTab.js';
 import TriggerSettingsTab from '@assets/components/TriggerSettingsTabs/TriggerSettingsTab.js';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 
-function TabsContainer({fetchData}) {
+function TabsContainer({fetchData, onSettingsChange, editing}) {
   const [selected, setSelected] = useState(0);
   const [settings, setSettings] = useState(fetchData || defaultSettings);
 
   const handleTabChange = useCallback(selectedTabIndex => setSelected(selectedTabIndex), []);
 
-  const {handleEdit, editing} = useEditApi({
-    url: '/settings'
-  });
-
-  const handleSave = async () => {
-    console.log('Saving settings with the following data:', settings);
-    try {
-      const result = await handleEdit(settings);
-
-      if (result) {
-        console.log('Settings saved successfully');
-      }
-    } catch (error) {
-      console.log('Error saving settings:', error);
-    }
-  };
-
   const handleChangeInput = (key, value) => {
-    setSettings(prev => ({...prev, [key]: value}));
+    const newSettings = {...settings, [key]: value};
+    setSettings(newSettings);
+    onSettingsChange(newSettings);
   };
 
   const tabs = [
@@ -65,16 +49,6 @@ function TabsContainer({fetchData}) {
               onSelect={handleTabChange}
               loading={editing}
             />
-            <Button
-              primary
-              loading={editing}
-              onClick={handleSave}
-              size={'medium'}
-              variant={'primary'}
-              tone={'success'}
-            >
-              Save Settings
-            </Button>
           </InlineStack>
           <Layout.Section>{renderTabContent()}</Layout.Section>
         </Card>

@@ -1,40 +1,28 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es6': true
+  env: {
+    es6: true,
+    node: true,
   },
-  'extends': [
-    'google',
-    'prettier',
-    'plugin:react/recommended'
+  parserOptions: {
+    "ecmaVersion": 2018,
+  },
+  extends: [
+    "eslint:recommended",
+    "google",
   ],
-  'globals': {
-    'Atomics': 'readonly',
-    'SharedArrayBuffer': 'readonly'
+  rules: {
+    "no-restricted-globals": ["error", "name", "length"],
+    "prefer-arrow-callback": "error",
+    "quotes": ["error", "double", {"allowTemplateLiterals": true}],
   },
-  'parser': 'babel-eslint',
-  'parserOptions': {
-    'ecmaFeatures': {
-      'jsx': true
+  overrides: [
+    {
+      files: ["**/*.spec.*"],
+      env: {
+        mocha: true,
+      },
+      rules: {},
     },
-    'ecmaVersion': 2018,
-    'sourceType': 'module'
-  },
-  'plugins': [
-    'prettier',
-    'react'
   ],
-  'rules': {
-    'prettier/prettier': 'error',
-    "require-jsdoc" : 0,
-    "valid-jsdoc": 0,
-    "camelcase": 0,
-    "no-invalid-this": 0,
-    "prefer-rest-params": 0
-  },
-  'settings': {
-    'react': {
-      'version': '^16.8.6'
-    }
-  },
+  globals: {},
 };

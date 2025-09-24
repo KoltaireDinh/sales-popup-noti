@@ -1,5 +1,6 @@
 import {Firestore} from '@google-cloud/firestore';
 import {batchCreate, paginateQuery} from '@functions/repositories/helper';
+import {formatDateFields} from '@avada/firestore-utils';
 
 /**
  * @documentation
@@ -16,9 +17,9 @@ const collection = firestore.collection('notifications');
  * @param notificationData
  */
 export async function createOne(notificationData) {
-  console.log('Inserting notification:', notificationData);
+  console.log('Inserting notification with data:', notificationData);
   try {
-    const docRef = await firestore.collection('notifications').add(notificationData);
+    const docRef = await collection.add(notificationData);
     console.log('Notification inserted with ID:', docRef.id);
     return docRef;
   } catch (err) {
@@ -50,6 +51,7 @@ export async function create(dataList) {
 export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
   console.log('Getting notifications by shopId: ', shopId);
   try {
+
     let queriedRef = collection;
     queriedRef = queriedRef.where('shopId', '==', shopId);
     queriedRef = queriedRef.orderBy('createdAt', 'asc');
@@ -60,10 +62,11 @@ export async function get({shopId, after, before, limit = 10, withDocs, hasCount
         query: {after, before, limit, withDocs, hasCount}
       })
     ]);
+
     return result;
   } catch (error) {
     console.log('Error getting notification by shopId');
-    throw error;
+    return [];
   }
 }
 
@@ -79,7 +82,7 @@ export async function getByDomain(shopDomain) {
       .orderBy('createdAt', 'desc')
       .get();
     return docs.docs.map(doc => ({
-      ...doc.data()
+      ...formatDateFields(doc.data())
     }));
   } catch (err) {
     console.error('Error getting notification by shopDomain: ', shopDomain);

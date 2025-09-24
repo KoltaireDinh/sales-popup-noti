@@ -2,9 +2,7 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 
 const isProduction = process.env.NODE_ENV === 'production';
-const environmentPath = !process.env.ENVIRONMENT
-  ? '.env'
-  : `.env.${process.env.ENVIRONMENT}`;
+const environmentPath = !process.env.ENVIRONMENT ? '.env' : `.env.${process.env.ENVIRONMENT}`;
 
 /**
  * @link https://stackoverflow.com/questions/47830273/babel-plugin-preset-files-are-not-allowed-to-export-objects-only-functions
