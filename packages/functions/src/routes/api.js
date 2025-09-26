@@ -13,6 +13,7 @@ export default function apiRouter(isEmbed = false) {
   router.get('/subscription', subscriptionController.getSubscription);
   router.get('/notifications', notificationController.getNotifications);
   router.post('/notifications', notificationController.createNotifications);
+  router.delete('/notifications/delete', notificationController.deleteNotifications);
   router.get('/settings', settingController.get);
   router.put('/settings', settingController.update);
   // router.post('/webhooks/order/new', webhookController.listenNewOrders);

@@ -42,3 +42,18 @@ export async function createNotifications(ctx) {
     ctx.body = {data: [], shopData: {}, success: false};
   }
 }
+
+export async function deleteNotifications(ctx) {
+  try {
+    const shopId = getCurrentShop(ctx);
+    const docRefIDs = ctx.req.body;
+    const data = await notificationRepository.deleteOne(docRefIDs);
+    ctx.body = {data, shopId, success: true};
+    console.log(docRefIDs);
+    await getNotifications(ctx)
+  }
+  catch (e) {
+    console.error(e);
+    ctx.body = {data: [], shopData: {}, success: false};
+  }
+}

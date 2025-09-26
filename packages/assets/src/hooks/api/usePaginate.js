@@ -63,12 +63,16 @@ export default function usePaginate({
     await handleFetchApi({page, before, after}, keepPreviousData);
     setQueries(prev => ({...prev, page}));
   };
+  const refetch = async () => {
+    await handleFetchApi(null, false);
+  }
 
   return {
     prevPage: () => onPaginate('prev'),
     nextPage: () => onPaginate('next'),
     onQueryChange,
     onQueriesChange,
+    refetch,
     ...fetchApiHook
   };
 }

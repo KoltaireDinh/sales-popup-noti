@@ -1,6 +1,7 @@
 import {Firestore} from '@google-cloud/firestore';
 import {batchCreate, paginateQuery} from '@functions/repositories/helper';
 import {formatDateFields} from '@avada/firestore-utils';
+import {batchDelete} from '../../lib/repositories/helper';
 
 /**
  * @documentation
@@ -24,7 +25,6 @@ export async function createOne(notificationData) {
     return docRef;
   } catch (err) {
     console.error('Error inserting notification:', err);
-    throw err;
   }
 }
 
@@ -35,6 +35,25 @@ export async function createOne(notificationData) {
  */
 export async function create(dataList) {
   await batchCreate({firestore: firestore, collection: collection, data: dataList});
+}
+
+/**
+ * delete notifications
+ * @param dataList
+ * @returns {Promise<void>}
+ */
+export async function deleteOne(dataList) {
+  console.log('deleteOne called with:', dataList);
+  if (!dataList || !Array.isArray(dataList) || dataList.length === 0) {
+    console.log('No data to delete - exiting early');
+    return;
+  }
+  console.log('Processing delete for', dataList.length, 'items');
+  const docsWithRefs = dataList.map(docId => ({
+    ref: collection.doc(docId)
+  }));
+  await batchDelete(firestore, docsWithRefs);
+  console.log('Delete completed successfully');
 }
 
 /**
@@ -51,19 +70,15 @@ export async function create(dataList) {
 export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
   console.log('Getting notifications by shopId: ', shopId);
   try {
-
     let queriedRef = collection;
     queriedRef = queriedRef.where('shopId', '==', shopId);
     queriedRef = queriedRef.orderBy('createdAt', 'asc');
-    const [result] = await Promise.all([
-      paginateQuery({
-        queriedRef,
-        collection,
-        query: {after, before, limit, withDocs, hasCount}
-      })
-    ]);
+    return await paginateQuery({
+      queriedRef,
 
-    return result;
+      collection,
+      query: {after, before, limit, withDocs, hasCount}
+    });
   } catch (error) {
     console.log('Error getting notification by shopId');
     return [];
