@@ -34,10 +34,9 @@ export async function paginateQuery({
   const limit = parseInt(defaultLimit || '20');
   let total;
   let totalPage;
-  if (query.hasCount) {
-    total = (await queriedRef.count().get()).data().count;
-    totalPage = Math.ceil(total / limit);
-  }
+
+  total = (await queriedRef.count().get()).data().count;
+  totalPage = Math.ceil(total / limit);
 
   const getAll = query.getAll || !limit;
   let hasPre = false;

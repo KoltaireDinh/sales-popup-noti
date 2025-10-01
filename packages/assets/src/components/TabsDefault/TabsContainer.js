@@ -36,9 +36,8 @@ function TabsContainer({fetchData, onSettingsChange, editing}) {
   return (
     <Layout>
       <Layout.Section variant={'oneThird'}>
-        <NotificationPopup settings={settings} />
+          <NotificationPopup settings={settings} />
       </Layout.Section>
-
       <Layout.Section>
         <Card>
           <InlineStack align={'space-between'}>

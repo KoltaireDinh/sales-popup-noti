@@ -10,21 +10,17 @@ function TriggerSettingsTab({input, handleChangeInput}) {
   return (
     <Layout>
       <Layout.Section>
+        <BlockStack gap="400">
           <Text variant="headingSm" as="h2" tone="strong">
-            PAGES RESTRICTION
+            RESTRICTIONS
           </Text>
           <Layout>
             <Layout.Section>
-              <BlockStack
-              gap={"200"}>
-                <div
-                style={{marginTop: '1.5rem'}}>
-                  <SelectExample
-                    onChange={value => handleChangeInput('allowShow', value)}
-                    value={settings.allowShow}
-                  />
-                </div>
-
+              <BlockStack gap="400">
+                <SelectExample
+                  onChange={value => handleChangeInput('allowShow', value)}
+                  value={settings.allowShow}
+                />
 
                 {settings.allowShow === 'specific' && (
                   <TextField
@@ -49,6 +45,7 @@ function TriggerSettingsTab({input, handleChangeInput}) {
               </BlockStack>
             </Layout.Section>
           </Layout>
+        </BlockStack>
       </Layout.Section>
     </Layout>
   );

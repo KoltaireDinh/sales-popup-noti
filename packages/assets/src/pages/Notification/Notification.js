@@ -14,7 +14,10 @@ export default function Notification() {
 
 
   return (
-    <Page fullWidth title="Notification" subtitle="List of sales notification from Shopify">
+    <Page
+      backAction={{content: 'Products', url: '#'}}
+      title="Notification"
+      subtitle="List of sales notification from Shopify">
       {isSkeletonLoading ? (
         <NotificationsSkeleton />
       ) : (

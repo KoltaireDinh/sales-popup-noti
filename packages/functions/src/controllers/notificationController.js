@@ -10,19 +10,20 @@ import * as notificationRepository from '@functions/repositories/notificationRep
 export async function getNotifications(ctx) {
   try {
     const shopId = getCurrentShop(ctx);
-    const {limit, after, before, hasCount} = ctx.query;
+    const {limit, after, before, sortBy = 'createdAt', sortOrder = 'desc'} = ctx.query;
     const data = await notificationRepository.get({
       shopId,
       after,
       before,
-      limit: limit,
-      hasCount: hasCount === 'true'
+      limit,
+      sortBy,
+      sortOrder
     });
     console.log('Fetched notifications', data);
-    ctx.body = {...data, shopId, success: true};
+    ctx.body = {...data, success: true};
   } catch (e) {
     console.error(e);
-    ctx.body = {data: [], shopData: {}, success: false};
+    ctx.body = {data: [], success: false};
   }
 }
 

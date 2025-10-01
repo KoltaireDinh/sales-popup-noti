@@ -13,8 +13,6 @@ import {API_VERSION} from '@avada/core/build/constants';
  * @returns {Promise<void>} Resolves when notification is created
  */
 export async function listenNewOrders(ctx) {
-  ctx.status = 200;
-  ctx.body = {success: true};
   try {
     console.log('Listen new orders function triggered :');
     const order = ctx.req.body;
@@ -26,9 +24,11 @@ export async function listenNewOrders(ctx) {
     const notificationGraphql = await shopify.graphql(query, {
       orderId: order.admin_graphql_api_id
     });
-    const orderData = notificationGraphql?.node;
-
+    const orderData = notificationGraphql.node;
     await notificationRepository.createOne(formatNotification(shop, orderData));
+
+    ctx.status = 200;
+    ctx.body = {success: true};
   } catch (e) {
     console.error('Error creating notifications with formatNotifications function: ', e);
     ctx.body = {data: [], success: false};

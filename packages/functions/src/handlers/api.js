@@ -8,6 +8,7 @@ import {verifyEmbedRequest} from '@avada/core';
 import shopifyConfig from '@functions/config/shopify';
 import appConfig from '@functions/config/app';
 import shopifyOptionalScopes from '@functions/config/shopifyOptionalScopes';
+import * as installationService from "@functions/services/installationService";
 
 // Initialize all demand configuration for an application
 const api = new App();
@@ -19,7 +20,16 @@ const verifyEmbedConfig = {
   secret: shopifyConfig.secret,
   hostName: appConfig.baseUrl,
   isEmbeddedApp: true,
-  optionalScopes: shopifyOptionalScopes
+  optionalScopes: shopifyOptionalScopes,
+  afterInstall: installationService.installApp,
+  accessTokenKey: shopifyConfig.accessTokenKey,
+  initialPlan: {
+    id: 'free',
+    name: 'Free',
+    price: 0,
+    trialDays: 0,
+    features: {}
+  }
 };
 render(api, {
   cache: true,

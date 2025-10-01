@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import useFetchApi from '@assets/hooks/api/useFetchApi';
 
 /**
@@ -11,7 +11,8 @@ import useFetchApi from '@assets/hooks/api/useFetchApi';
  * @param defaultSort
  * @param searchKey
  * @param initQueries
- * @returns {{pageInfo: {hasPre, hasNext}, data, setData, count, setCount, fetchApi, loading, fetched, prevPage, nextPage, onQueryChange, onQueriesChange}}
+ * @param params - Additional query parameters (like sortBy, sortOrder)
+ * @returns {{pageInfo: {hasPre, hasNext}, data, setData, count, setCount, fetchApi, loading, fetched, prevPage, nextPage, onQueryChange, onQueriesChange, refetch}}
  */
 export default function usePaginate({
   url,
@@ -22,21 +23,37 @@ export default function usePaginate({
   defaultLimit = 10,
   defaultSort = 'createdAt:asc',
   searchKey = 'searchKey',
-  initQueries = {}
+  initQueries = {},
+  params = {} // Add this parameter
 }) {
   const [queries, setQueries] = useState({
     page: 1,
     sort: defaultSort,
     limit: defaultLimit,
     [searchKey]: '',
-    ...initQueries
+    ...initQueries,
+    ...params // Merge params into initial queries
   });
 
-  const fetchApiHook = useFetchApi({url, defaultData, initLoad, presentData, initQueries: queries});
+  const fetchApiHook = useFetchApi({
+    url,
+    defaultData,
+    initLoad,
+    presentData,
+    initQueries: {...queries, ...params} // Merge params here too
+  });
   const {data, fetchApi} = fetchApiHook;
 
-  const handleFetchApi = async (params = null, keepData = false) => {
-    await fetchApi(url, {...queries, ...params}, keepData);
+  // Refetch when params change
+  useEffect(() => {
+    if (Object.keys(params).length > 0) {
+      setQueries(prev => ({...prev, ...params, page: 1})); // Reset to page 1 on sort change
+      handleFetchApi({...params, page: 1}, false);
+    }
+  }, [JSON.stringify(params)]); // Watch for params changes
+
+  const handleFetchApi = async (extraParams = null, keepData = false) => {
+    await fetchApi(url, {...queries, ...params, ...extraParams}, keepData);
   };
 
   const onQueryChange = (key, value, isFetch = false) => {
@@ -63,9 +80,10 @@ export default function usePaginate({
     await handleFetchApi({page, before, after}, keepPreviousData);
     setQueries(prev => ({...prev, page}));
   };
+
   const refetch = async () => {
     await handleFetchApi(null, false);
-  }
+  };
 
   return {
     prevPage: () => onPaginate('prev'),

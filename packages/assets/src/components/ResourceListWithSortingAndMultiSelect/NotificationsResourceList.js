@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Card, Layout, ResourceItem, ResourceList} from '@shopify/polaris';
 import NotificationPopup from '@assets/components/NotificationPopup/NotificationPopup.js';
 import usePaginate from '@assets/hooks/api/usePaginate.js';
@@ -6,11 +6,16 @@ import {DeleteIcon} from '@shopify/polaris-icons';
 import useDeleteApi from '@assets/hooks/api/useDeleteApi.js';
 
 function NotificationsResourceList() {
-  const {data, loading, pageInfo, nextPage, prevPage, refetch} = usePaginate({
-    url: '/notifications'
-  });
   const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
   const [selectedItems, setSelectedItem] = useState([]);
+
+  const {data, loading, pageInfo, nextPage, prevPage, refetch} = usePaginate({
+    url: '/notifications',
+    params: {
+      sortBy: 'createdAt',
+      sortOrder: sortValue === 'DATE_MODIFIED_DESC' ? 'desc' : 'asc'
+    }
+  });
 
   // Bulk delete hook
   const {deleting: bulkDeleting, handleDelete: handleBulkDelete} = useDeleteApi({
@@ -19,23 +24,8 @@ function NotificationsResourceList() {
       console.log('Bulk delete successful');
       setSelectedItem([]);
       refetch();
-    }});
-
-  const sortedData = useMemo(() => {
-    if (!data || !Array.isArray(data)) return [];
-
-    console.log('Sorting notifications...');
-    return [...data].sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-
-      if (sortValue === 'DATE_MODIFIED_DESC') {
-        return dateB - dateA;
-      } else {
-        return dateA - dateB;
-      }
-    });
-  }, [data, sortValue]);
+    }
+  });
 
   // Handle bulk delete
   const handleBulkDeleteAction = () => {
@@ -75,6 +65,7 @@ function NotificationsResourceList() {
             ]}
             onSortChange={selected => {
               setSortValue(selected);
+              // This will trigger a refetch with new sort params
             }}
             selectedItems={selectedItems}
             onSelectionChange={(items) => {
@@ -83,20 +74,18 @@ function NotificationsResourceList() {
             }}
             selectable
             resourceName={resourceName}
-            items={sortedData}
+            items={data || []}
             loading={loading}
             promotedBulkActions={promotedBulkActions}
             renderItem={item => (
-              <ResourceItem
-                id={item.id}
-              >
+              <ResourceItem id={item.id}>
                 <NotificationPopup
                   firstName={item.firstName}
                   city={item.city}
                   country={item.country}
                   productName={item.productName}
                   productImage={item.productImage}
-                  timestamp={item.createdAt}
+                  relativeDate={item.relativeDate}
                 />
               </ResourceItem>
             )}

@@ -47,8 +47,8 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@avada/console": "1.0.0",
-    "@shopify/cli": "^3.84.2",
+    "@avada/console": "1.0.9",
+    "@shopify/cli": "^3.85.2",
     "concurrently": "^7.6.0",
     "moment": "^2.30.1",
     "moment-timezone": "^0.6.0"

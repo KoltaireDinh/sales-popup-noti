@@ -130,8 +130,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@avada/app@workspace:."
   dependencies:
-    "@avada/console": "npm:1.0.0"
-    "@shopify/cli": "npm:^3.84.2"
+    "@avada/console": "npm:1.0.9"
+    "@shopify/cli": "npm:^3.85.2"
     babel-jest: "npm:^24.9.0"
     concurrently: "npm:^7.6.0"
     delay-cli: "npm:2.0.0"
@@ -227,9 +227,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@avada/console@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@avada/console@npm:1.0.0"
+"@avada/console@npm:1.0.9":
+  version: 1.0.9
+  resolution: "@avada/console@npm:1.0.9"
   dependencies:
     commander: "npm:^3.0.2"
     firebase-admin: "npm:^11.5.0"
@@ -240,20 +240,20 @@ __metadata:
     string-template: "npm:^1.0.0"
   bin:
     avada: bin/avada.js
-  checksum: 10c0/5172db0b520da9ae84652b9fd237310cf857b81749400f500717abb4adde630dd79451730a606c0abc1fbde01464063b803a74b35a28e01393e60da51912efb0
+  checksum: 10c0/86c4833f4d1f6bda8801fd51ff35d9d7ee609402c1ed8a7110fd9e903fe47d3a2b8f76068c3241753f99e0248798c380f80355e463f52b6008213ab8733b0cf1
   languageName: node
   linkType: hard
 
-"@avada/core@npm:3.3.19":
-  version: 3.3.19
-  resolution: "@avada/core@npm:3.3.19"
+"@avada/core@npm:4.2.0":
+  version: 4.2.0
+  resolution: "@avada/core@npm:4.2.0"
   dependencies:
     "@avada/shopify-api": "npm:1.0.1"
-    "@shopify/koa-shopify-webhooks": "npm:5.0.6"
+    "@shopify/koa-shopify-webhooks": "npm:^5.1.1"
     camelcase-keys: "npm:^6.1.2"
     crypto-js: "npm:^4.0.0"
     firebase-admin: "npm:^11.5.0"
-    koa: "npm:^2.13.4"
+    koa: "npm:^2.16.2"
     koa-router: "npm:^7.4.0"
     node-fetch: "npm:2.6.7"
     nonce: "npm:^1.0.4"
@@ -264,7 +264,7 @@ __metadata:
   peerDependencies:
     "@google-cloud/firestore": ^6.7.0
     shopify-api-node: ^3.8.2
-  checksum: 10c0/34b54cf1f8a7c14749b21135665fe815ce27d72fbe31e382d7df7ee3c2702e55b1126c60fb561cc0318d04c33d1f6bdc56159212107195a2a3426f3cbf5ddfe5
+  checksum: 10c0/21716f4d75477f4775069f8a6a2bd281e0b69b9b53d48c017a7877585cf187919591fddda4d55088af7864eb3e024f7117266be37244e7c9cc5fc225f585611d
   languageName: node
   linkType: hard
 
@@ -285,7 +285,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@avada/functions@workspace:packages/functions"
   dependencies:
-    "@avada/core": "npm:3.3.19"
+    "@avada/core": "npm:4.2.0"
     "@avada/firestore-utils": "npm:0.0.3"
     "@avada/utils": "npm:^2.0.3"
     "@babel/cli": "npm:^7.6.0"
@@ -301,6 +301,7 @@ __metadata:
     firebase-functions: "npm:4.4.1"
     graphql-tag: "npm:^2.12.6"
     isomorphic-fetch: "npm:^2.2.1"
+    jsonwebtoken: "npm:^9.0.2"
     koa: "npm:^2.8.1"
     koa-ejs: "npm:^4.2.0"
     koa-router: "npm:^7.4.0"
@@ -4659,25 +4660,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shopify/cli@npm:^3.84.2":
-  version: 3.84.2
-  resolution: "@shopify/cli@npm:3.84.2"
+"@shopify/cli@npm:^3.85.2":
+  version: 3.85.2
+  resolution: "@shopify/cli@npm:3.85.2"
   dependencies:
     "@ast-grep/napi": "npm:0.33.0"
     esbuild: "npm:0.25.5"
     global-agent: "npm:3.0.0"
   bin:
     shopify: bin/run.js
-  checksum: 10c0/73769aee20062c75a56f59274dadef9a6cdded4136ce286c4023a7ed2c5850bcfe0b7f36f4aa15f3fb7874a0a714ffe5c1f9755f84e4ec75790ae09c656986f2
+  checksum: 10c0/fe975102602d230def40d9c72fd6178a34695c86403f168bfb427b514293fa2dca365d609b92364129b2a4eb141d1666b30bc9cf452667411483de5709cde3fd
   conditions: (os=darwin | os=linux | os=win32)
   languageName: node
   linkType: hard
 
-"@shopify/koa-shopify-webhooks@npm:5.0.6":
-  version: 5.0.6
-  resolution: "@shopify/koa-shopify-webhooks@npm:5.0.6"
+"@shopify/koa-shopify-webhooks@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@shopify/koa-shopify-webhooks@npm:5.1.1"
   dependencies:
-    "@shopify/network": "npm:^3.2.1"
+    "@shopify/network": "npm:^3.3.0"
     "@types/koa": "npm:^2.0.0"
     koa-bodyparser: "npm:>=4.0.0 <5.0.0"
     koa-compose: "npm:>=4.0.0 <5.0.0"
@@ -4685,7 +4686,7 @@ __metadata:
     safe-compare: "npm:^1.1.3"
   peerDependencies:
     koa: ">=2.0.0"
-  checksum: 10c0/3e76cdaaafd8a08a7129e1c0fcefe10d1835a86c7df58ec8187b7476c9e76423cecb4a384d3d95b96c90c1aaa4ffd14ebf35f3df29cf95a685b360b857b46526
+  checksum: 10c0/73e766da7809bccf09e66ea44f82a104b983453af682a8353da4ec0668b347eabc51e2922c24a5eb2ede6839d53b3ae1bd8a57aff74009fa69808893d19509b0
   languageName: node
   linkType: hard
 
@@ -4696,7 +4697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shopify/network@npm:^3.2.1":
+"@shopify/network@npm:^3.3.0":
   version: 3.3.0
   resolution: "@shopify/network@npm:3.3.0"
   checksum: 10c0/59afcd54271eb63d8eb289b9f1d309f2d5f2bcf1b6d70cc04ddc20f156a723cb1b6e9a98f5df7c0c07501e8ec33f830623f76ee3223d3c535f20a8db46e1a2e5
@@ -14404,7 +14405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonwebtoken@npm:^9.0.0":
+"jsonwebtoken@npm:^9.0.0, jsonwebtoken@npm:^9.0.2":
   version: 9.0.2
   resolution: "jsonwebtoken@npm:9.0.2"
   dependencies:
@@ -14652,7 +14653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa@npm:^2.13.4, koa@npm:^2.8.1":
+"koa@npm:^2.16.2, koa@npm:^2.8.1":
   version: 2.16.2
   resolution: "koa@npm:2.16.2"
   dependencies:

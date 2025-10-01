@@ -17,7 +17,6 @@ const collection = firestore.collection('settings');
  */
 export async function getOne(id) {
   const doc = await collection.doc(id).get();
-  console.log(doc.data());
   if (!doc.exists) {
     return null;
   }

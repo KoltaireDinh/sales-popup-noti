@@ -64,23 +64,23 @@ export async function deleteOne(dataList) {
  * @param {string} [params.before] - Cursor for pagination (document ID to start before)
  * @param {number} [params.limit] - Maximum number of documents to return
  * @param {boolean} [params.withDocs] - Whether to include document data in response
- * @param {boolean} [params.hasCount] - Whether to include total count in response
+
  * @returns {Promise<Object>} Paginated notification results
  */
-export async function get({shopId, after, before, limit = 10, withDocs, hasCount}) {
+export async function get({shopId, after, before, limit = 10, withDocs, sortBy = 'createdAt', sortOrder = 'desc'}) {
   console.log('Getting notifications by shopId: ', shopId);
   try {
-    let queriedRef = collection;
-    queriedRef = queriedRef.where('shopId', '==', shopId);
-    queriedRef = queriedRef.orderBy('createdAt', 'asc');
-    return await paginateQuery({
-      queriedRef,
+        let queriedRef = collection;
+        queriedRef = queriedRef.where('shopId', '==', shopId);
+        queriedRef = queriedRef.orderBy(sortBy, sortOrder);
 
-      collection,
-      query: {after, before, limit, withDocs, hasCount}
-    });
-  } catch (error) {
-    console.log('Error getting notification by shopId');
+        return await paginateQuery({
+          queriedRef,
+          collection,
+          query: {after, before, limit, withDocs}
+        });
+      } catch (error) {
+    console.log('Error getting notification by shopId:', error);
     return [];
   }
 }

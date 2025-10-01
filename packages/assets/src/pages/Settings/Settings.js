@@ -46,7 +46,7 @@ export default function Settings() {
 
   return (
       <Page
-        fullWidth
+        backAction={{content: 'Products', url: '#'}}
         title="Settings"
         subtitle="Decide how your notifications will display"
         primaryAction={
