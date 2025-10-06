@@ -9,7 +9,7 @@ import moment from 'moment';
  * @returns {{shopId, shopDomain, firstName: *, city: *, country: *, productName, productId, productImage: *, createdAt: Date}}
  */
 
-export function formatNotification(shop, order, productImageMap) {
+export function notificationPresenter(shop, order, productImageMap) {
   try {
     const isGraphQL = order?.lineItems;
     const customer = isGraphQL ? order?.customer : order?.customer

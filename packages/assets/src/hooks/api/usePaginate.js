@@ -11,7 +11,7 @@ import useFetchApi from '@assets/hooks/api/useFetchApi';
  * @param defaultSort
  * @param searchKey
  * @param initQueries
- * @param params - Additional query parameters (like sortBy, sortOrder)
+ * @param params
  * @returns {{pageInfo: {hasPre, hasNext}, data, setData, count, setCount, fetchApi, loading, fetched, prevPage, nextPage, onQueryChange, onQueriesChange, refetch}}
  */
 export default function usePaginate({
@@ -24,7 +24,7 @@ export default function usePaginate({
   defaultSort = 'createdAt:asc',
   searchKey = 'searchKey',
   initQueries = {},
-  params = {} // Add this parameter
+  params = {}
 }) {
   const [queries, setQueries] = useState({
     page: 1,
@@ -32,7 +32,7 @@ export default function usePaginate({
     limit: defaultLimit,
     [searchKey]: '',
     ...initQueries,
-    ...params // Merge params into initial queries
+    ...params
   });
 
   const fetchApiHook = useFetchApi({
@@ -40,17 +40,17 @@ export default function usePaginate({
     defaultData,
     initLoad,
     presentData,
-    initQueries: {...queries, ...params} // Merge params here too
+    initQueries: {...queries, ...params}
   });
   const {data, fetchApi} = fetchApiHook;
 
   // Refetch when params change
   useEffect(() => {
     if (Object.keys(params).length > 0) {
-      setQueries(prev => ({...prev, ...params, page: 1})); // Reset to page 1 on sort change
+      setQueries(prev => ({...prev, ...params, page: 1}));
       handleFetchApi({...params, page: 1}, false);
     }
-  }, [JSON.stringify(params)]); // Watch for params changes
+  }, [JSON.stringify(params)]);
 
   const handleFetchApi = async (extraParams = null, keepData = false) => {
     await fetchApi(url, {...queries, ...params, ...extraParams}, keepData);

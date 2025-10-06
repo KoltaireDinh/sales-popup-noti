@@ -6,8 +6,8 @@ const defaultSettings = {
   firstDelay: 5,
   popsInterval: 2,
   maxPopsDisplay: 10,
-  includedUrls: '',
-  excludedUrls: '',
+  includedUrls: ' ',
+  excludedUrls: ' ',
   allowShow: 'all'
 };
 

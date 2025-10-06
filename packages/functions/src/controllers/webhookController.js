@@ -1,6 +1,6 @@
 import * as notificationRepository from '@functions/repositories/notificationRepository';
 
-import {formatNotification} from '@functions/helpers/formatNotifications';
+import {notificationPresenter} from '@functions/presenters/notificationPresenter';
 import {initShopify} from '@functions/services/shopifyService';
 import {loadGraphQL} from '@functions/helpers/graphql/graphqlHelpers';
 import {getShopByShopifyDomain} from '@avada/core';
@@ -25,7 +25,7 @@ export async function listenNewOrders(ctx) {
       orderId: order.admin_graphql_api_id
     });
     const orderData = notificationGraphql.node;
-    await notificationRepository.createOne(formatNotification(shop, orderData));
+    await notificationRepository.createOne(notificationPresenter(shop, orderData));
 
     ctx.status = 200;
     ctx.body = {success: true};

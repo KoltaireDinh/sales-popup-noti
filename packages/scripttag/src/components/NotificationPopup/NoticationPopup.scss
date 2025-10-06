@@ -1,8 +1,28 @@
 .Avava-SP__Wrapper {
   width: 293px;
- //  z-index: 99;
+  z-index: 99;
   color: #333;
- // position: fixed;
+  position: fixed;
+}
+
+.Avava-SP__Wrapper.top-right {
+  top: 15px;
+  right: 15px;
+}
+
+.Avava-SP__Wrapper.bottom-right {
+  bottom: 15px;
+  right: 15px;
+}
+
+.Avava-SP__Wrapper.top-left {
+  top: 15px;
+  left: 15px;
+}
+
+.Avava-SP__Wrapper.bottom-left {
+  bottom: 15px;
+  left: 15px;
 }
 
 .Avava-SP__Wrapper .Avava-SP__LinkWrapper {

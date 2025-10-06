@@ -9,16 +9,12 @@ import {getShopByShopifyDomain} from '@avada/core';
 export async function installApp(ctx) {
   try {
     const shopDomain = ctx.state.shopify.shop;
-    const shopData = await getShopByShopifyDomain(shopDomain);
-    const shopify = initShopify(shopData);
-    console.log('shopify', shopify);
-    const accessToken = shopify.options.accessToken; // ảo ma Canada
-    console.log('Access Token: ', accessToken);
     const shop = await getShopByShopifyDomain(shopDomain);
+    const shopify = initShopify(shop);
     await Promise.all([
       syncOrders(shopify, shop),
       createDefaultSettings(shop),
-      registerWebhook(shopify),
+      registerWebhook(shopify)
     ]);
     console.log('Install app successfully');
   } catch (err) {
